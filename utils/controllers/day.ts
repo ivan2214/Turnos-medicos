@@ -1,7 +1,7 @@
-import prismadb from "@/lib/prismadb";
+import prisma from "@/app/libs/prismadb";
 
 export const getDays = async () => {
-  return prismadb.day.findMany({
+  return prisma.day.findMany({
     orderBy: {
       weekday: "asc",
     },
@@ -12,7 +12,7 @@ export const getDays = async () => {
 };
 
 export const getDay = async (dayId: number) => {
-  return prismadb.day.findUnique({
+  return prisma.day.findUnique({
     where: {
       id: dayId,
     },
@@ -21,7 +21,7 @@ export const getDay = async (dayId: number) => {
 
 
 export const createDay = async (weekday: string,) => {
-  const day = await prismadb.day.findUnique({
+  const day = await prisma.day.findUnique({
     where: {
       weekday: weekday,
     },
@@ -31,7 +31,7 @@ export const createDay = async (weekday: string,) => {
     throw new Error("El dia ya existe");
   }
 
-  return prismadb.day.create({
+  return prisma.day.create({
     data: {
       weekday: weekday,
     },

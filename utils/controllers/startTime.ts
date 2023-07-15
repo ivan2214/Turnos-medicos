@@ -1,7 +1,7 @@
-import prismadb from "@/lib/prismadb";
+import prisma from "@/app/libs/prismadb";
 
 export const getStartTimes = async () => {
-  return prismadb.startTime.findMany({
+  return prisma.startTime.findMany({
     orderBy: {
       time: "asc"
     },
@@ -13,7 +13,7 @@ export const getStartTimes = async () => {
 };
 
 export const getStartTime = async (startTimeId: number) => {
-  return prismadb.startTime.findUnique({
+  return prisma.startTime.findUnique({
     where: {
       id: startTimeId,
     },
@@ -22,7 +22,7 @@ export const getStartTime = async (startTimeId: number) => {
 
 
 export const createStartTime = async (startTime: string) => {
-  const startTimeAlreadyExistins = await prismadb.startTime.findUnique({
+  const startTimeAlreadyExistins = await prisma.startTime.findUnique({
     where: {
       time: startTime
     },
@@ -32,7 +32,7 @@ export const createStartTime = async (startTime: string) => {
     throw new Error("El dia ya existe");
   }
 
-  return prismadb.startTime.create({
+  return prisma.startTime.create({
     data: {
       time: startTime,
     },

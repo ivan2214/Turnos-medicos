@@ -1,8 +1,8 @@
 import { EndTime } from '@prisma/client';
-import prismadb from "@/lib/prismadb"
+import prisma from "@/app/libs/prismadb"
 
 export const getEndTimes = async () => {
-  const endTimes: (EndTime & {})[] = await prismadb.endTime.findMany({
+  const endTimes: (EndTime & {})[] = await prisma.endTime.findMany({
     orderBy: {
       time: "asc"
     }

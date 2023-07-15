@@ -52,7 +52,7 @@ const FormSchema = z.object({
 
 type Props = {
   patient: Patient | undefined;
-  appointments: Appointment[];
+  appointments: Appointment[] | undefined | null;
   days: Day[];
   startTimes: StartTime[];
   endTimes: EndTime[];
@@ -74,7 +74,7 @@ export function TurnsForm({
   const today = new Date();
   const nextMonth = addMonths(new Date(), 1);
 
-/*   const filteredTurns = useFilteredTurns({
+  /*   const filteredTurns = useFilteredTurns({
     appointments,
     startTime: form.watch("startTime"),
   }); */
@@ -83,7 +83,9 @@ export function TurnsForm({
   const formattedFecha = selectedFecha ? format(selectedFecha, "PPP") : "";
   const selectedDay = days.find((day) => day.weekday === formattedFecha);
 
-/*   const filteredDays = days.filter((day) => {
+  console.log({ startTimes });
+
+  /*   const filteredDays = days.filter((day) => {
     const dayTurns = appointments.filter(
       (appointment) => appointment.dayId === day.id,
     );
@@ -97,14 +99,14 @@ export function TurnsForm({
     return availableTurns.length > 0;
   }); */
 
-/*   const filteredTurnsByDay = selectedDay
+  /*   const filteredTurnsByDay = selectedDay
     ? filteredTurns.filter(
         (appointment) => appointment.dayId === selectedDay.id,
       )
     : []; */
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-   /*  turnOfPattientMutation.mutate(
+    /*  turnOfPattientMutation.mutate(
       {
         patientId: Number(patient?.id),
         weekday: format(data.weekday, "PPP"),

@@ -1,8 +1,8 @@
-import prismadb from "@/lib/prismadb";
+import prisma from "@/app/libs/prismadb";
 
 
 export const getAppointments = async () => {
-  const appointments = await prismadb.appointment.findMany({
+  const appointments = await prisma.appointment.findMany({
     orderBy: {
       day: {
         weekday: "asc"
@@ -19,7 +19,7 @@ export const getApointment = async (appointmentId: number) => {
   if (!appointmentId) return null;
 
 
-  const appointment = prismadb.appointment.findMany({
+  const appointment = prisma.appointment.findMany({
     where: {
       id: appointmentId,
     },
@@ -47,13 +47,13 @@ export const createApointment = async (
     throw new Error("El formulario no es valido");
   }
 
-  const patient = await prismadb.patient.findUnique({
+  const patient = await prisma.patient.findUnique({
     where: {
       id: patientId,
     },
   });
 
-  const turn = await prismadb.appointment.findFirst({
+  const turn = await prisma.appointment.findFirst({
     where: {
       dayId: dayId,
     },
@@ -68,7 +68,7 @@ export const createApointment = async (
   }
 
   if (!!turn) {
-    await prismadb.appointment.update({
+    await prisma.appointment.update({
       where: {
         id: turn.id,
       },
@@ -79,7 +79,7 @@ export const createApointment = async (
       },
     });
 
-    return await prismadb.patient.update({
+    return await prisma.patient.update({
       where: {
         id: patient.id,
       },
@@ -96,7 +96,7 @@ export const createApointment = async (
       },
     });
   } else {
-    await prismadb.appointment.create({
+    await prisma.appointment.create({
       data: {
         dayId: dayId,
         busy: true,

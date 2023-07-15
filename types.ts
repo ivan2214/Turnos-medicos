@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 export interface Turnos {
   nombre: string
   horaInicio: String
@@ -5,3 +7,12 @@ export interface Turnos {
   tomado: Boolean
   fecha: Date
 }
+
+export type SafeUser = Omit<
+  User,
+  "createdAt" | "updatedAt" | "emailVerified"
+> & {
+  createdAt: string;
+  updatedAt: string;
+  emailVerified: string | null;
+};

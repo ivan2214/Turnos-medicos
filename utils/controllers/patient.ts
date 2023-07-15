@@ -1,7 +1,7 @@
-import prismadb from "@/lib/prismadb";
+import prisma from "@/app/libs/prismadb";
 
 export const getPatients = async () => {
-  return prismadb.patient.findMany({
+  return prisma.patient.findMany({
     orderBy: {
       name: "asc",
     },
@@ -12,7 +12,7 @@ export const getPatients = async () => {
 };
 
 export const getPatient = async (patientId: number) => {
-  return prismadb.patient.findUnique({
+  return prisma.patient.findUnique({
     where: {
       id: patientId,
     },
@@ -21,7 +21,7 @@ export const getPatient = async (patientId: number) => {
 
 
 export const createPatient = async (fullName: string, email: string) => {
-  const patient = await prismadb.patient.findUnique({
+  const patient = await prisma.patient.findUnique({
     where: {
       email: email,
     },
@@ -31,7 +31,7 @@ export const createPatient = async (fullName: string, email: string) => {
     throw new Error("El paciente ya existe");
   }
 
-  return prismadb.patient.create({
+  return prisma.patient.create({
     data: {
       name: fullName,
       email: email,

@@ -1,4 +1,5 @@
 import { createApointment, getApointment, getAppointments } from "@/utils/controllers/appointment";
+import { createUser } from "@/utils/controllers/createUser";
 import { createDay, getDay, getDays } from "@/utils/controllers/day";
 import { createPatient, getPatient, getPatients } from "@/utils/controllers/patient";
 import { createStartTime, getStartTime, getStartTimes } from "@/utils/controllers/startTime";
@@ -100,6 +101,21 @@ export const appRouter = t.router({
   }) => {
     return await createStartTime(
       startTime
+    )
+  }),
+  createUser: t.procedure.input(z.object({
+    email: z.string().min(3),
+    name: z.string().min(3),
+    password: z.string().min(3),
+  })).mutation(async ({
+    input: { email, name, password }
+  }) => {
+    return await createUser(
+      {
+        email,
+        name,
+        password
+      }
     )
   }),
 });

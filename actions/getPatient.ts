@@ -1,4 +1,4 @@
-import prismadb from "@/lib/prismadb"
+import prisma from "@/app/libs/prismadb"
 
 export const getPatient = async (email: string) => {
 
@@ -6,7 +6,7 @@ export const getPatient = async (email: string) => {
     return null
 
 
-  const patient = await prismadb.patient.findUnique({
+  const patient = await prisma.patient.findUnique({
     where: {
       email: email
     }

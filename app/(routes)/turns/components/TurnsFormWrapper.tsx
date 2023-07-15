@@ -1,31 +1,40 @@
-import { trpc } from "@/utils/trpc";
-
-import { Patient, Appointment } from "@prisma/client";
+import { Patient } from "@prisma/client";
 
 import { TurnsForm } from "./turns-form";
-import { getAppointments } from "@/actions/getAppointments";
+
 import { getDays } from "@/actions/getDays";
 import { getStartTimes } from "@/actions/getStartTimes";
 import { getEndTimes } from "@/actions/getEndTimes";
+import getAppointments from "@/actions/getAppointments";
 
 type Props = {
   patient: Patient | undefined;
 };
 
 export async function TurnsFormWrapper({ patient }: Props) {
-  const { appointments } = await getAppointments();
+  const { safeAppointments } = await getAppointments({
+    busy: false,
+  });
   const { days } = await getDays();
   const { startTimes } = await getStartTimes();
   const { endTimes } = await getEndTimes();
-
-  if (!appointments || !days || !startTimes || !endTimes) {
+  
+  console.log({ safeAppointments });
+  
+  /* if (
+    !safeAppointments ||
+    !days.length ||
+    !startTimes?.length ||
+    !endTimes?.length
+  ) {
     return <p>No hay datos...</p>;
-  }
+  } */
+
 
   return (
     <TurnsForm
       patient={patient}
-      appointments={appointments ?? []}
+      appointments={safeAppointments}
       days={days}
       startTimes={startTimes}
       endTimes={endTimes}

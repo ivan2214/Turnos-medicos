@@ -1,8 +1,8 @@
 import { Day } from '@prisma/client';
-import prismadb from "@/lib/prismadb"
+import prisma from "@/app/libs/prismadb"
 
 export const getDays = async () => {
-  const days: (Day & {})[] = await prismadb.day.findMany({
+  const days: (Day & {})[] = await prisma.day.findMany({
     orderBy: {
       weekday: "asc"
     }
