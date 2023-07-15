@@ -53,14 +53,14 @@ model User {
 }
 
 model Appointment {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   busy      Boolean
   createdAt DateTime @default(now())
 
   user   User?   @relation(fields: [userId], references: [id])
   userId String?
   day    Day?    @relation(fields: [dayId], references: [id])
-  dayId  Int?
+  dayId  String?
 
   @@index([userId])
   @@index([dayId])
@@ -75,29 +75,29 @@ model VerificationToken {
 }
 
 model StartTime {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   time      String   @unique
   createdAt DateTime @default(now())
 
   Day   Day? @relation(fields: [dayId], references: [id])
-  dayId Int?
+  dayId String?
 
   @@index([dayId])
 }
 
 model EndTime {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   time      String   @unique
   createdAt DateTime @default(now())
 
   Day   Day? @relation(fields: [dayId], references: [id])
-  dayId Int?
+  dayId String?
 
   @@index([dayId])
 }
 
 model Day {
-  id           Int           @id @default(autoincrement())
+  id           String        @id @default(uuid())
   weekday      String        @unique(sort: Asc)
   createdAt    DateTime      @default(now())
   startTimes   StartTime[]

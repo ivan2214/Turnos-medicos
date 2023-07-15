@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { toast, useToast } from "@/components/ui/use-toast";
 import { useLoginModal, useRegisterModal } from "@/hooks";
 import { useCallback, useState } from "react";
-import Modal from "./Modal";
+import Modal from "./ModalActions";
 import { ChromeIcon, GithubIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { trpc } from "@/utils/trpc";

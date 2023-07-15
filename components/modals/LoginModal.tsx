@@ -6,7 +6,7 @@ import { signIn } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-import Modal from "./Modal";
+import Modal from "./ModalActions";
 import Heading from "@/components/ui/heading";
 import useRegisterModal from "@/hooks/useRegisterModal";
 import useLoginModal from "@/hooks/useLoginModal";

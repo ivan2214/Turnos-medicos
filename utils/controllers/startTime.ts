@@ -12,7 +12,7 @@ export const getStartTimes = async () => {
   });
 };
 
-export const getStartTime = async (startTimeId: number) => {
+export const getStartTime = async (startTimeId: string) => {
   return prisma.startTime.findUnique({
     where: {
       id: startTimeId,

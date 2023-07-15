@@ -11,7 +11,7 @@ export const getDays = async () => {
   });
 };
 
-export const getDay = async (dayId: number) => {
+export const getDay = async (dayId: string) => {
   return prisma.day.findUnique({
     where: {
       id: dayId,

@@ -2,8 +2,8 @@
 import prisma from "@/app/libs/prismadb"
 
 export interface IAppointmentsParams {
-  dayId?: number;
-  userId?: number;
+  dayId?: string;
+  userId?: string;
   busy: boolean;
   startTime?: string;
   endTime?: string;

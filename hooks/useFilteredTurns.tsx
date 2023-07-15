@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 type UseFilteredTurnsProps = {
   appointments: Appointment[];
-  dayId: number;
+  dayId: string;
 };
 
 export const useFilteredTurns = ({ appointments, dayId }: UseFilteredTurnsProps) => {

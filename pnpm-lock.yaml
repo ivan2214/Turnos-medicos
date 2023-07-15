@@ -5,15 +5,18 @@ specifiers:
   '@hookform/resolvers': ^3.1.1
   '@prisma/client': ^5.0.0
   '@radix-ui/react-avatar': ^1.0.3
+  '@radix-ui/react-checkbox': ^1.0.4
   '@radix-ui/react-dialog': ^1.0.4
   '@radix-ui/react-dropdown-menu': ^2.0.5
   '@radix-ui/react-label': ^2.0.2
   '@radix-ui/react-popover': ^1.0.6
   '@radix-ui/react-select': ^1.2.2
+  '@radix-ui/react-separator': ^1.0.3
   '@radix-ui/react-slot': ^1.0.2
   '@radix-ui/react-toast': ^1.1.4
   '@tanstack/react-query': ^4.29.19
   '@tanstack/react-query-devtools': ^4.29.19
+  '@tanstack/react-table': ^8.9.3
   '@trpc/client': ^10.34.0
   '@trpc/react-query': ^10.34.0
   '@trpc/server': ^10.34.0
@@ -56,15 +59,18 @@ dependencies:
   '@hookform/resolvers': 3.1.1_react-hook-form@7.45.1
   '@prisma/client': 5.0.0_prisma@5.0.0
   '@radix-ui/react-avatar': 1.0.3_uxzdvyigevn6hawdlr7isnvh64
+  '@radix-ui/react-checkbox': 1.0.4_uxzdvyigevn6hawdlr7isnvh64
   '@radix-ui/react-dialog': 1.0.4_uxzdvyigevn6hawdlr7isnvh64
   '@radix-ui/react-dropdown-menu': 2.0.5_uxzdvyigevn6hawdlr7isnvh64
   '@radix-ui/react-label': 2.0.2_uxzdvyigevn6hawdlr7isnvh64
   '@radix-ui/react-popover': 1.0.6_uxzdvyigevn6hawdlr7isnvh64
   '@radix-ui/react-select': 1.2.2_uxzdvyigevn6hawdlr7isnvh64
+  '@radix-ui/react-separator': 1.0.3_uxzdvyigevn6hawdlr7isnvh64
   '@radix-ui/react-slot': 1.0.2_i73ekzlbntu7jol6ph2fvy4mga
   '@radix-ui/react-toast': 1.1.4_uxzdvyigevn6hawdlr7isnvh64
   '@tanstack/react-query': 4.29.19_biqbaboplfbrettd7655fr4n2y
   '@tanstack/react-query-devtools': 4.29.19_nuitd4fqvrl4dch2k5g6hd6fwe
+  '@tanstack/react-table': 8.9.3_biqbaboplfbrettd7655fr4n2y
   '@trpc/client': 10.34.0_@trpc+server@10.34.0
   '@trpc/react-query': 10.34.0_l3kats7ggqvwe5esnyd4ngueqm
   '@trpc/server': 10.34.0
@@ -495,6 +501,34 @@ packages:
       '@radix-ui/react-primitive': 1.0.3_uxzdvyigevn6hawdlr7isnvh64
       '@radix-ui/react-use-callback-ref': 1.0.1_i73ekzlbntu7jol6ph2fvy4mga
       '@radix-ui/react-use-layout-effect': 1.0.1_i73ekzlbntu7jol6ph2fvy4mga
+      '@types/react': 18.2.14
+      '@types/react-dom': 18.2.7
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@radix-ui/react-checkbox/1.0.4_uxzdvyigevn6hawdlr7isnvh64:
+    resolution: {integrity: sha512-CBuGQa52aAYnADZVt/KBQzXrwx6TqnlwtcIPGtVt5JkkzQwMOLJjPukimhfKEr4GQNd43C+djUh5Ikopj8pSLg==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.22.6
+      '@radix-ui/primitive': 1.0.1
+      '@radix-ui/react-compose-refs': 1.0.1_i73ekzlbntu7jol6ph2fvy4mga
+      '@radix-ui/react-context': 1.0.1_i73ekzlbntu7jol6ph2fvy4mga
+      '@radix-ui/react-presence': 1.0.1_uxzdvyigevn6hawdlr7isnvh64
+      '@radix-ui/react-primitive': 1.0.3_uxzdvyigevn6hawdlr7isnvh64
+      '@radix-ui/react-use-controllable-state': 1.0.1_i73ekzlbntu7jol6ph2fvy4mga
+      '@radix-ui/react-use-previous': 1.0.1_i73ekzlbntu7jol6ph2fvy4mga
+      '@radix-ui/react-use-size': 1.0.1_i73ekzlbntu7jol6ph2fvy4mga
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.7
       react: 18.2.0
@@ -1094,6 +1128,27 @@ packages:
       react-remove-scroll: 2.5.5_i73ekzlbntu7jol6ph2fvy4mga
     dev: false
 
+  /@radix-ui/react-separator/1.0.3_uxzdvyigevn6hawdlr7isnvh64:
+    resolution: {integrity: sha512-itYmTy/kokS21aiV5+Z56MZB54KrhPgn6eHDKkFeOLR34HMN2s8PaN47qZZAGnvupcjxHaFZnW4pQEh0BvvVuw==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.22.6
+      '@radix-ui/react-primitive': 1.0.3_uxzdvyigevn6hawdlr7isnvh64
+      '@types/react': 18.2.14
+      '@types/react-dom': 18.2.7
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
   /@radix-ui/react-slot/1.0.0_react@18.2.0:
     resolution: {integrity: sha512-3mrKauI/tWXo1Ll+gN5dHcxDPdm/Df1ufcDLCecn+pnCIVcdWE7CujXo8QaXOWRJyZyQWWbpB8eFwHzWXlv5mQ==}
     peerDependencies:
@@ -1370,6 +1425,23 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-table/8.9.3_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-Ng9rdm3JPoSCi6cVZvANsYnF+UoGVRxflMb270tVj0+LjeT/ZtZ9ckxF6oLPLcKesza6VKBqtdF9mQ+vaz24Aw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      '@tanstack/table-core': 8.9.3
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/table-core/8.9.3:
+    resolution: {integrity: sha512-NpHZBoHTfqyJk0m/s/+CSuAiwtebhYK90mDuf5eylTvgViNOujiaOaxNDxJkQQAsVvHWZftUGAx1EfO1rkKtLg==}
+    engines: {node: '>=12'}
     dev: false
 
   /@trpc/client/10.34.0_@trpc+server@10.34.0:

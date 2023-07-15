@@ -17,7 +17,7 @@ export const appRouter = t.router({
     return await getAppointments()
   }),
   getApointment: t.procedure.input(z.object({
-    appointmentId: z.number(),
+    appointmentId: z.string().min(1),
   })).query(async ({
     input: { appointmentId }
   }) => {
@@ -26,9 +26,9 @@ export const appRouter = t.router({
   }),
   createApointment: t.procedure.input(z.object({
     userId: z.string().uuid(),
-    startTimeId: z.number(),
-    endTimeId: z.number(),
-    dayId: z.number(),
+    startTimeId: z.string().min(1),
+    endTimeId: z.string().min(1),
+    dayId: z.string().min(1),
   })).mutation(async ({
     input: { userId, startTimeId, endTimeId, dayId }
   }) => {
@@ -46,7 +46,7 @@ export const appRouter = t.router({
     return await getDays()
   }),
   getDay: t.procedure.input(z.object({
-    dayId: z.number(),
+    dayId: z.string().min(1),
   })).query(async ({
     input: { dayId }
   }) => {
@@ -68,7 +68,7 @@ export const appRouter = t.router({
     return await getStartTimes()
   }),
   getStartTime: t.procedure.input(z.object({
-    startTimeId: z.number(),
+    startTimeId: z.string().min(1),
   })).query(async ({
     input: { startTimeId }
   }) => {

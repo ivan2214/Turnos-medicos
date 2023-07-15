@@ -15,7 +15,7 @@ export const getAppointments = async () => {
   return appointments
 };
 
-export const getApointment = async (appointmentId: number) => {
+export const getApointment = async (appointmentId: string) => {
   if (!appointmentId) return null;
 
 
@@ -39,9 +39,9 @@ export const getApointment = async (appointmentId: number) => {
 
 export const createApointment = async (
   userId: string,
-  startTimeId: number,
-  endTimeId: number,
-  dayId: number
+  startTimeId: string,
+  endTimeId: string,
+  dayId: string
 ) => {
   if (!startTimeId || !endTimeId || !userId || !dayId) {
     throw new Error("El formulario no es valido");
