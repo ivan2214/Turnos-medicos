@@ -1,12 +1,11 @@
 import { format } from "date-fns";
 
-import getCurrentUser from "@/actions/getCurrentUser";
-import { redirect } from "next/navigation";
-
 import prisma from "@/app/libs/prismadb";
 
 import { AppointmentsClient } from "./components/client";
 import { AppointmentColumn } from "./components/columns";
+
+export const revalidate = 60; // revalidate this page every 60 seconds
 
 const page = async () => {
   const appointments = await prisma.appointment.findMany({

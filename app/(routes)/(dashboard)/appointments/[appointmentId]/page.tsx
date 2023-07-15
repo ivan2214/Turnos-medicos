@@ -19,7 +19,7 @@ const AppointmentPage = async ({
 
   const days = await prismadb.day.findMany({
     orderBy: {
-      weekday: "asc",
+      createdAt: "asc",
     },
   });
 

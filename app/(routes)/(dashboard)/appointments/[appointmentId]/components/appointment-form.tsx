@@ -32,11 +32,12 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Appointment, Day, EndTime, StartTime, User } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
+import { trpc } from "@/utils/trpc";
 
 const formSchema = z.object({
   busy: z.boolean().default(false),
-  dayId: z.string().min(1),
-  userId: z.string().min(1),
+  dayId: z.string().uuid().min(1),
+  userId: z.string().uuid().min(1),
 });
 
 type AppointmentFormValues = z.infer<typeof formSchema>;
@@ -58,6 +59,8 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const createApointment = trpc.createApointment.useMutation();
 
   const title = initialData ? "Edit appointment" : "Create appointment";
   const description = initialData
@@ -88,14 +91,11 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const onSubmit = async (data: AppointmentFormValues) => {
     try {
       setLoading(true);
-      if (initialData) {
-        await axios.patch(
-          `/api/trpc/appointments/${params.appointmentId}`,
-          data,
-        );
-      } else {
-        await axios.post(`/api/trpc/appointments`, data);
-      }
+
+      createApointment.mutate({
+        dayId: data.dayId,
+        userId: data.userId,
+      });
       router.refresh();
       router.push(`/appointments`);
       toast({
