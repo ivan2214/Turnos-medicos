@@ -30,19 +30,24 @@ export const MainNav: React.FC<MainNavProps> = ({
       active: pathname === "/",
     },
     {
-      href: "/turns",
+      href: "/appointments",
       label: "Turnos",
-      active: pathname === "/turns",
+      active: pathname === "/appointments",
     },
     {
-      href: "/dashboard/turns",
-      label: "Administrar Turnos",
-      active: pathname === "/dashboard/turns",
+      href: "/times",
+      label: "Crear Horarios",
+      active: pathname === "/times",
     },
     {
-      href: "/dashboard/patients",
-      label: "Administrar Pacientes",
-      active: pathname === "/dashboard/patients",
+      href: "/days",
+      label: "Gestionar Dias",
+      active: pathname === "/days",
+    },
+    {
+      href: "/users",
+      label: "Gestionar Usuarios",
+      active: pathname === "/users",
     },
   ];
 

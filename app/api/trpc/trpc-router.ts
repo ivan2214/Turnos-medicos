@@ -1,7 +1,6 @@
 import { createApointment, getApointment, getAppointments } from "@/utils/controllers/appointment";
-import { createUser } from "@/utils/controllers/createUser";
 import { createDay, getDay, getDays } from "@/utils/controllers/day";
-import { createPatient, getPatient, getPatients } from "@/utils/controllers/patient";
+import { createUser, getUser, getUsers } from "@/utils/controllers/user";
 import { createStartTime, getStartTime, getStartTimes } from "@/utils/controllers/startTime";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
@@ -26,38 +25,20 @@ export const appRouter = t.router({
     return await getApointment(appointmentId)
   }),
   createApointment: t.procedure.input(z.object({
-    patientId: z.number(),
+    userId: z.string().uuid(),
     startTimeId: z.number(),
     endTimeId: z.number(),
     dayId: z.number(),
   })).mutation(async ({
-    input: { patientId, startTimeId, endTimeId, dayId }
+    input: { userId, startTimeId, endTimeId, dayId }
   }) => {
     return await createApointment(
-      patientId,
+      userId,
       startTimeId,
       endTimeId,
       dayId,
 
     )
-  }),
-
-  //patients
-  getPatients: t.procedure.query(async () => {
-    return await getPatients()
-  }),
-  getPatient: t.procedure.input(z.object({
-    patientId: z.number(),
-  })).query(async ({
-    input: { patientId }
-  }) => {
-    return await getPatient(patientId)
-  }),
-  createPatient: t.procedure.input(z.object({
-    fullName: z.string(),
-    email: z.string().email(),
-  })).mutation(async ({ input: { email, fullName } }) => {
-    return await createPatient(fullName, email)
   }),
 
   //days
@@ -102,6 +83,18 @@ export const appRouter = t.router({
     return await createStartTime(
       startTime
     )
+  }),
+
+  //users
+  getUsers: t.procedure.query(async () => {
+    return await getUsers()
+  }),
+  getUser: t.procedure.input(z.object({
+    userId: z.string().uuid(),
+  })).query(async ({
+    input: { userId }
+  }) => {
+    return await getUser(userId)
   }),
   createUser: t.procedure.input(z.object({
     email: z.string().min(3),

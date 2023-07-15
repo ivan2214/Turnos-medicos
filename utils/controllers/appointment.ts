@@ -38,18 +38,18 @@ export const getApointment = async (appointmentId: number) => {
 
 
 export const createApointment = async (
-  patientId: number,
+  userId: string,
   startTimeId: number,
   endTimeId: number,
   dayId: number
 ) => {
-  if (!startTimeId || !endTimeId || !patientId || !dayId) {
+  if (!startTimeId || !endTimeId || !userId || !dayId) {
     throw new Error("El formulario no es valido");
   }
 
-  const patient = await prisma.patient.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
-      id: patientId,
+      id: userId,
     },
   });
 
@@ -59,7 +59,7 @@ export const createApointment = async (
     },
   });
 
-  if (!patient) {
+  if (!user) {
     throw new Error("El paciente no fue encontrado");
   }
 
@@ -74,14 +74,14 @@ export const createApointment = async (
       },
       data: {
         busy: true,
-        patientId: patient.id,
+        userId: user.id,
         dayId
       },
     });
 
-    return await prisma.patient.update({
+    return await prisma.user.update({
       where: {
-        id: patient.id,
+        id: user.id,
       },
       data: {
         appointments: {
@@ -100,7 +100,7 @@ export const createApointment = async (
       data: {
         dayId: dayId,
         busy: true,
-        patientId: patient.id,
+        userId: user.id,
       },
     });
   }

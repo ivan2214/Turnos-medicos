@@ -33,7 +33,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { trpc } from "@/utils/trpc";
 
-import { Patient, Appointment, Day, StartTime, EndTime } from "@prisma/client";
+import { User, Appointment, Day, StartTime, EndTime } from "@prisma/client";
 
 import { useFilteredTurns } from "@/hooks/useFilteredTurns";
 import { es } from "date-fns/locale";
@@ -51,21 +51,21 @@ const FormSchema = z.object({
 });
 
 type Props = {
-  patient: Patient | undefined;
+  user: User | undefined;
   appointments: Appointment[] | undefined | null;
   days: Day[];
-  startTimes: StartTime[];
-  endTimes: EndTime[];
+  startTimes: StartTime[] | undefined | null;
+  endTimes: EndTime[] | undefined | null;
 };
 
 export function TurnsForm({
-  patient,
+  user,
   appointments,
   days,
   startTimes,
   endTimes,
 }: Props) {
-  const turnOfPattientMutation = trpc.createApointment.useMutation();
+  const appointmentOfUserMutation = trpc.createApointment.useMutation();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -106,9 +106,9 @@ export function TurnsForm({
     : []; */
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    /*  turnOfPattientMutation.mutate(
+    /*  appointmentOfUserMutation.mutate(
       {
-        patientId: Number(patient?.id),
+        userId: Number(user?.id),
         weekday: format(data.weekday, "PPP"),
         dayId: data.weekday,
         endTimeId: data.endTime,
@@ -219,7 +219,7 @@ export function TurnsForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {startTimes.map(({ time, dayId, id }) => (
+                  {startTimes?.map(({ time, dayId, id }) => (
                     <SelectItem
                       disabled={isInvalid(time)}
                       key={id}
@@ -257,7 +257,7 @@ export function TurnsForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {endTimes.map(({ time, dayId, id }) => (
+                  {endTimes?.map(({ time, dayId, id }) => (
                     <SelectItem
                       disabled={isInvalid(time)}
                       key={id}

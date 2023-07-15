@@ -3,7 +3,7 @@ import prisma from "@/app/libs/prismadb"
 
 export interface IAppointmentsParams {
   dayId?: number;
-  patientId?: number;
+  userId?: number;
   busy: boolean;
   startTime?: string;
   endTime?: string;
@@ -14,7 +14,7 @@ export default async function getAppointments(
 ) {
   try {
     const {
-      patientId,
+      userId,
       busy,
       startTime,
       endTime,
@@ -23,8 +23,8 @@ export default async function getAppointments(
 
     let query: any = {};
 
-    if (patientId) {
-      query.patientId = patientId;
+    if (userId) {
+      query.userId = userId;
     }
 
     if (busy) {

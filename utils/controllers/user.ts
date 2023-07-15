@@ -8,6 +8,28 @@ type TypeCreateUser = {
   password: string
 }
 
+export const getUsers = async () => {
+  return prisma.user.findMany({
+    orderBy: {
+      name: "asc",
+    },
+    include: {
+      appointments: true,
+    },
+  });
+};
+
+export const getUser = async (userId: string) => {
+  return prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+};
+
+
+
+
 export const createUser = async ({
   email,
   name,

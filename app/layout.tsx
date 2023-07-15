@@ -43,7 +43,7 @@ export default async function RootLayout({
                 <RegisterModal />
               </ClientOnly>
               <Navbar currentUser={currentUser} />
-              <div className="pb-20 pt-28">{children}</div>
+              <div className="container lg:py-3">{children}</div>
             </ThemeProvider>
           </AuthContext>
         </TrpcProvider>

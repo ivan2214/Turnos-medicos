@@ -1,12 +1,20 @@
-import { User } from "@prisma/client";
+import { Appointment, Day, User } from "@prisma/client";
 
-export interface Turnos {
-  nombre: string
-  horaInicio: String
-  horaFin: String
-  tomado: Boolean
-  fecha: Date
-}
+export type SafeAppointment = Omit<
+  Appointment,
+  "createdAt"
+> & {
+  createdAt: string;
+
+};
+
+export type SafeDay = Omit<
+  Day,
+  "createdAt"
+> & {
+  createdAt: string;
+};
+
 
 export type SafeUser = Omit<
   User,

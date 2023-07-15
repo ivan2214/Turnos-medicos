@@ -1,4 +1,4 @@
-import { Patient } from "@prisma/client";
+import { User } from "@prisma/client";
 
 import { TurnsForm } from "./turns-form";
 
@@ -8,10 +8,10 @@ import { getEndTimes } from "@/actions/getEndTimes";
 import getAppointments from "@/actions/getAppointments";
 
 type Props = {
-  patient: Patient | undefined;
+  user: User | undefined;
 };
 
-export async function TurnsFormWrapper({ patient }: Props) {
+export async function TurnsFormWrapper({ user }: Props) {
   const { safeAppointments } = await getAppointments({
     busy: false,
   });
@@ -33,7 +33,7 @@ export async function TurnsFormWrapper({ patient }: Props) {
 
   return (
     <TurnsForm
-      patient={patient}
+      user={user}
       appointments={safeAppointments}
       days={days}
       startTimes={startTimes}
