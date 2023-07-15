@@ -11,13 +11,20 @@ import {
 } from "@/components/ui/card";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
+import getCurrentUser from "@/actions/getCurrentUser";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Example dashboard app using the components.",
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return redirect("/auth");
+  }
+  if (!currentUser?.admin) return redirect("/needs-admin");
   return (
     <>
       <div className="hidden flex-col md:flex">

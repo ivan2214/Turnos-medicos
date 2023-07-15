@@ -13,6 +13,7 @@ import RegisterModal from "@/components/modals/RegisterModal";
 import ClientOnly from "@/components/ClientOnly";
 import AuthContext from "./context/AuthContext";
 import { redirect } from "next/navigation";
+import NeedAdminPage from "./(routes)/needs-admin/page";
 
 const PoppinsFont = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -42,8 +43,12 @@ export default async function RootLayout({
                 <LoginModal />
                 <RegisterModal />
               </ClientOnly>
-              <Navbar currentUser={currentUser} />
-              <div className="container lg:py-3">{children}</div>
+              {currentUser?.admin && <Navbar currentUser={currentUser} />}
+              <div
+                className={`container ${currentUser?.admin ? "lg:py-3" : ""}`}
+              >
+                {children}
+              </div>
             </ThemeProvider>
           </AuthContext>
         </TrpcProvider>
