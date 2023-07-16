@@ -18,15 +18,14 @@ interface AppointmentsClientProps {
 export const AppointmentsClient: React.FC<AppointmentsClientProps> = ({
   data,
 }) => {
-  const params = useParams();
   const router = useRouter();
 
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Appointments (${data.length})`}
-          description="Manage appointments for your store"
+          title={`Turnos (${data.length})`}
+          description="Gestiona las citas de tu consultorio"
         />
         <Button onClick={() => router.push(`/appointments/new`)}>
           <Plus className="mr-2 h-4 w-4" /> Add New
@@ -34,7 +33,7 @@ export const AppointmentsClient: React.FC<AppointmentsClientProps> = ({
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />
-      <Heading title="API" description="API Calls for Appointments" />
+      <Heading title="API" description="API Calls for Turnos" />
       <Separator />
       <ApiList entityName="appointments" entityIdName="appointmentId" />
     </>

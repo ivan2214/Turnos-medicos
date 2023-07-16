@@ -2,13 +2,12 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -38,6 +37,11 @@ const formSchema = z.object({
   busy: z.boolean().default(false),
   dayId: z.string().uuid().min(1),
   userId: z.string().uuid().min(1),
+  time: z.object({
+    timeId: z.string().uuid().min(1).optional(),
+    startTime: z.string().min(1),
+    endTime: z.string().min(1),
+  }),
 });
 
 type AppointmentFormValues = z.infer<typeof formSchema>;
@@ -46,12 +50,14 @@ interface AppointmentFormProps {
   initialData: Appointment | null;
   users: User[];
   days: Day[];
+  times: Time[];
 }
 
 export const AppointmentForm: React.FC<AppointmentFormProps> = ({
   initialData,
   days,
   users,
+  times,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -59,6 +65,16 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [filterTime, setFilterTime] = useState<Time[]>([
+    {
+      startTime: "",
+      endTime: "",
+      appointmentId: "",
+      createdAt: new Date(),
+      dayId: "",
+      id: "",
+    },
+  ]);
 
   const createApointment = trpc.createApointment.useMutation();
 
@@ -80,6 +96,10 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     : {
         busy: false,
         userId: "",
+        time: {
+          timeId: "",
+          endTime: "",
+        },
         dayId: "",
       };
 
@@ -96,6 +116,12 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
         {
           dayId: data.dayId,
           userId: data.userId,
+          busy: data.busy,
+          time: {
+            timeId: data?.time?.timeId,
+            startTime: data?.time?.startTime,
+            endTime: data?.time?.endTime,
+          },
         },
         {
           onSuccess(data, variables, context) {
@@ -144,6 +170,16 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       setOpen(false);
     }
   };
+
+  const { dayId } = form.getValues();
+
+  useEffect(() => {
+    const timesFilter = times.filter((time) => time.dayId == dayId);
+    setFilterTime(timesFilter);
+  }, [dayId, times]);
+
+  console.log({ filterTime });
+  console.log({ dayId });
 
   return (
     <>
@@ -214,7 +250,13 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   <FormLabel>Days</FormLabel>
                   <Select
                     disabled={loading}
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      const timesFilter = times.filter(
+                        (time) => time.dayId === value,
+                      );
+                      setFilterTime(timesFilter);
+                    }}
                     value={field.value}
                     defaultValue={field.value}
                   >
@@ -230,6 +272,72 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                       {days.map((day) => (
                         <SelectItem key={day.id} value={day.id}>
                           {day.weekday}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="time.startTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Inicio del turno</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Seleccione un dia"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {filterTime?.map((time) => (
+                        <SelectItem key={time.id} value={time.id}>
+                          {time.startTime}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="time.endTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Fin del turno</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Seleccione un dia"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {filterTime?.map((time) => (
+                        <SelectItem key={time.id} value={time.id}>
+                          {time.endTime}
                         </SelectItem>
                       ))}
                     </SelectContent>

@@ -23,6 +23,12 @@ const AppointmentPage = async ({
     },
   });
 
+  const times = await prismadb.time.findMany({
+    orderBy: {
+      startTime: "asc",
+    },
+  });
+
   const users = await prismadb.user.findMany({
     orderBy: {
       name: "asc",
@@ -32,7 +38,12 @@ const AppointmentPage = async ({
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <AppointmentForm days={days} users={users} initialData={appointment} />
+        <AppointmentForm
+          times={times}
+          days={days}
+          users={users}
+          initialData={appointment}
+        />
       </div>
     </div>
   );

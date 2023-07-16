@@ -31,12 +31,12 @@ export const MainNav: React.FC<MainNavProps> = ({
     },
     {
       href: "/appointments",
-      label: "Turnos",
+      label: "Gestionar Turnos",
       active: pathname === "/appointments",
     },
     {
       href: "/times",
-      label: "Crear Horarios",
+      label: "Gestionar Horarios",
       active: pathname === "/times",
     },
     {

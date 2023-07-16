@@ -37,7 +37,7 @@ export function MainNavMobile({
     },
     {
       href: "/appointments",
-      label: "Turnos",
+      label: "Gestionar Turnos",
       active: pathname === "/appointments",
     },
     {

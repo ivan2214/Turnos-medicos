@@ -52,7 +52,7 @@ export const createUser = async ({
       email,
       name,
       hashedPassword,
-      admin: false
+      admin: email === "bongiovanniivan12@gmail.com" ? true : false
     }
   });
 

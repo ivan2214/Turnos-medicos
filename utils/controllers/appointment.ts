@@ -1,4 +1,5 @@
 import prisma from "@/app/libs/prismadb";
+import { Appointment } from "@prisma/client";
 
 
 export const getAppointments = async () => {
@@ -36,12 +37,19 @@ export const getApointment = async (appointmentId: string) => {
 };
 
 
+type TimeProp = {
+  timeId?: string
+  startTime: string
+  endTime: string
+}
+
 export const createApointment = async (
   userId: string,
   dayId: string,
-  busy: boolean
+  busy: boolean,
+  timeProp: TimeProp
 ) => {
-  if (!userId || !dayId || !busy) {
+  if (!userId || !dayId || !busy || !timeProp || !timeProp.startTime || !timeProp.endTime) {
     throw new Error("El formulario no es valido");
   }
 
@@ -57,11 +65,17 @@ export const createApointment = async (
     },
   });
 
-  const appointment = await prisma.appointment.findFirst({
+  const appointment: Appointment | null = await prisma.appointment.findFirst({
     where: {
       dayId: dayId,
     },
   });
+
+  const time = await prisma.time.findUnique({
+    where: {
+      id: timeProp.timeId
+    }
+  })
 
   if (!user) {
     throw new Error("El paciente no fue encontrado");
@@ -71,46 +85,49 @@ export const createApointment = async (
     throw new Error("El dia no fue encontrado");
   }
 
-  if (appointment?.busy) {
-    throw new Error("El turno ya fue tomado");
+  if (!time) {
+    throw new Error("El tiempo no fue encontrado");
   }
 
-  if (!!appointment) {
-    await prisma.appointment.update({
+  if (!!appointment && !!time) {
+    return await prisma.appointment.update({
       where: {
         id: appointment.id,
       },
       data: {
         busy: busy,
         userId: user.id,
-        dayId: day.id
-      },
-    });
-
-    /*  return await prisma.user.update({
-       where: {
-         id: user.id,
-       },
-       data: {
-         appointments: {
-           connectOrCreate: {
-             create: {
-               dayId: dayId,
-               busy: true,
-             },
-             where: { id: appointment?.id },
-           },
-         },
-       },
-     }); */
-  } else {
-    await prisma.appointment.create({
-      data: {
         dayId: day.id,
-        busy: busy,
-        userId: user.id,
+        Time: {
+
+          update: {
+            data: {
+              startTime: time.startTime,
+              endTime: time.endTime
+            },
+            where: {
+              id: time.id
+            }
+          }
+        }
       },
     });
   }
+
+  return await prisma.appointment.create({
+    data: {
+      dayId: day.id,
+      busy: busy,
+      userId: user.id,
+      Time: {
+        create: {
+          dayId: day.id,
+          startTime: timeProp.startTime,
+          endTime: timeProp.endTime
+        }
+      }
+    },
+  });
+
 };
 

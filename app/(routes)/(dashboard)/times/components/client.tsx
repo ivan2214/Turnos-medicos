@@ -23,8 +23,8 @@ export const TimeClient: React.FC<TimesClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Times (${data?.length})`}
-          description="Manage times for your store"
+          title={`Horarios (${data?.length})`}
+          description="Gestiona las citas de tu consultorio"
         />
         <Button onClick={() => router.push(`/times/new`)}>
           <Plus className="mr-2 h-4 w-4" /> Add New
@@ -32,12 +32,16 @@ export const TimeClient: React.FC<TimesClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable searchKey="startTime" columns={columns} data={data} />
-      <Heading title="API" description="API Calls for Times" />
-      <Separator />
-      <ApiList
-        entityName="times"
-        entityIdName={["startTimeId", "endTimeId", "dayId"]}
-      />
+      {process.env.NODE_ENV === "development" && (
+        <>
+          <Heading title="API" description="API Calls for Times" />
+          <Separator />
+          <ApiList
+            entityName="times"
+            entityIdName={["startTimeId", "endTimeId", "dayId"]}
+          />
+        </>
+      )}
     </>
   );
 };

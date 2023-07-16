@@ -28,13 +28,19 @@ export const appRouter = t.router({
     userId: z.string().uuid().min(1),
     dayId: z.string().uuid().min(1),
     busy: z.boolean().default(true),
+    time: z.object({
+      timeId: z.string().uuid().min(1).optional(),
+      startTime: z.string().min(1),
+      endTime: z.string().min(1),
+    })
   })).mutation(async ({
-    input: { userId, dayId, busy }
+    input: { userId, dayId, busy, time }
   }) => {
     return await createApointment(
       userId,
       dayId,
-      busy
+      busy,
+      time
     )
   }),
 
