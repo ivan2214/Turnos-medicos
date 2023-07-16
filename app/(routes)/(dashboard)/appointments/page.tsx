@@ -5,7 +5,7 @@ import prisma from "@/app/libs/prismadb";
 import { AppointmentsClient } from "./components/client";
 import { AppointmentColumn } from "./components/columns";
 
-export const revalidate = 60; // revalidate this page every 60 seconds
+export const revalidate = 10; // revalidate this page every 60 seconds
 
 const page = async () => {
   const appointments = await prisma.appointment.findMany({
@@ -24,7 +24,8 @@ const page = async () => {
     (item) => ({
       id: item.id.toString(),
       busy: Boolean(item.busy),
-      user: item.user ? item.user.name || "" : "",
+      name: item.user?.name ? item.user.name || "" : "",
+      email: item.user?.email ? item.user.email || "" : "",
       day: item.day ? item.day.weekday || "" : "",
       createdAt: format(item.createdAt, "MMMM do, yyyy"),
     }),

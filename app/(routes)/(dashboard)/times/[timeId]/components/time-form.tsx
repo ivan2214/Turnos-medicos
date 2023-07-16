@@ -1,12 +1,11 @@
 "use client";
 
 import * as z from "zod";
-import axios from "axios";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,79 +28,77 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Appointment, Day, Time, User } from "@prisma/client";
+import { Time, Day } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/utils/trpc";
 
 const formSchema = z.object({
-  busy: z.boolean().default(false),
   dayId: z.string().uuid().min(1),
-  userId: z.string().uuid().min(1),
+  time: z.object({
+    startTime: z.string().min(1),
+    endTime: z.string().min(1),
+  }),
 });
 
-type AppointmentFormValues = z.infer<typeof formSchema>;
+type TimeFormValues = z.infer<typeof formSchema>;
 
-interface AppointmentFormProps {
-  initialData: Appointment | null;
-  users: User[];
-  days: Day[];
+interface TimeFormProps {
+  initialData: Time | null;
+  days: Day[] | null | undefined;
 }
 
-export const AppointmentForm: React.FC<AppointmentFormProps> = ({
-  initialData,
-  days,
-  users,
-}) => {
-  const params = useParams();
+export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
   const router = useRouter();
   const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const createApointment = trpc.createApointment.useMutation();
+  const createTime = trpc.createTime.useMutation();
+  const deleteTime = trpc.deleteTime.useMutation();
 
-  const title = initialData ? "Edit appointment" : "Create appointment";
-  const description = initialData
-    ? "Edit a appointment."
-    : "Add a new appointment";
-  const toastMessage = initialData
-    ? "Appointment updated."
-    : "Appointment created.";
+  const title = initialData ? "Edit time" : "Create time";
+  const description = initialData ? "Edit a time." : "Add a new time";
+  const toastMessage = initialData ? "Time updated." : "Time created.";
   const action = initialData ? "Save changes" : "Create";
 
   const defaultValues = initialData
     ? {
         ...initialData,
+        time: {
+          startTime: initialData.startTime,
+          endTime: initialData.endTime,
+        },
         dayId: initialData.dayId ?? "",
-        userId: initialData.userId ?? "",
       }
     : {
-        busy: false,
-        userId: "",
+        time: {
+          startTime: "",
+          endTime: "",
+        },
         dayId: "",
       };
 
-  const form = useForm<AppointmentFormValues>({
+  const form = useForm<TimeFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  const onSubmit = async (data: AppointmentFormValues) => {
+  const onSubmit = async (data: TimeFormValues) => {
     try {
       setLoading(true);
 
-      createApointment.mutate(
+      createTime.mutate(
         {
+          time: data.time,
           dayId: data.dayId,
-          userId: data.userId,
+          timeId: initialData?.id,
         },
         {
           onSuccess(data, variables, context) {
             toast({
               title: toastMessage,
-              description: "Appointment updated.",
+              description: "Time updated.",
             });
           },
           onError(error, variables, context) {
@@ -112,11 +109,9 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           },
         },
       );
-      router.push(`/appointments`);
+      router.push(`/times`);
       router.refresh();
-      toast({
-        title: toastMessage,
-      });
+
     } catch (error: any) {
       toast({
         title: "Something went wrong.",
@@ -129,12 +124,27 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/trpc/appointments/${params.appointmentId}`);
+      deleteTime.mutate(
+        {
+          timeId: initialData?.id!,
+        },
+        {
+          onSuccess(data, variables, context) {
+            toast({
+              title: "Time deleted.",
+              description: "Time updated.",
+            });
+          },
+          onError(error, variables, context) {
+            toast({
+              title: "Something went wrong.",
+              description: error.message,
+            });
+          },
+        },
+      );
+      router.push(`/times`);
       router.refresh();
-      router.push(`/appointments`);
-      toast({
-        title: "Appointment deleted.",
-      });
     } catch (error: any) {
       toast({
         title: "Something went wrong.",
@@ -175,10 +185,44 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <div className="gap-8 md:grid md:grid-cols-3">
             <FormField
               control={form.control}
-              name="userId"
+              name="time.startTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Users</FormLabel>
+                  <FormLabel>Comienza</FormLabel>
+                  <FormControl>
+                    <Input type="time" placeholder="17:00" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Porfavor ponga el horario en el que comienza el turno
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="time.endTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Termina</FormLabel>
+                  <FormControl>
+                    <Input type="time" placeholder="17:30" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Porfavor ponga el horario en el que finaliza el turno
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="dayId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Dia</FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -194,40 +238,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {users.map((user) => (
-                        <SelectItem key={user.id} value={user.id}>
-                          {user.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dayId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Days</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Seleccione un dia"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {days.map((day) => (
+                      {days?.map((day) => (
                         <SelectItem key={day.id} value={day.id}>
                           {day.weekday}
                         </SelectItem>
@@ -235,28 +246,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                     </SelectContent>
                   </Select>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="busy"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      // @ts-ignore
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Busy</FormLabel>
-                    <FormDescription>
-                      This appointment will appear on the home page
-                    </FormDescription>
-                  </div>
                 </FormItem>
               )}
             />

@@ -1,7 +1,7 @@
 import { createApointment, getApointment, getAppointments } from "@/utils/controllers/appointment";
 import { createDay, getDay, getDays } from "@/utils/controllers/day";
 import { createUser, getUser, getUsers } from "@/utils/controllers/user";
-import { createStartTime, getStartTime, getStartTimes } from "@/utils/controllers/startTime";
+import { createTime, deleteTime, getTime, getTimes } from "@/utils/controllers/time";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
@@ -61,24 +61,38 @@ export const appRouter = t.router({
   }),
 
   //startTime
-  getStartTimes: t.procedure.query(async () => {
-    return await getStartTimes()
+  getTimes: t.procedure.query(async () => {
+    return await getTimes()
   }),
-  getStartTime: t.procedure.input(z.object({
+  getTime: t.procedure.input(z.object({
     startTimeId: z.string().min(1),
   })).query(async ({
     input: { startTimeId }
   }) => {
     if (!startTimeId) return null;
-    return await getStartTime(startTimeId)
+    return await getTime(startTimeId)
   }),
-  createStartTime: t.procedure.input(z.object({
-    startTime: z.string().min(3),
+  createTime: t.procedure.input(z.object({
+    time: z.object({
+      startTime: z.string().min(1),
+      endTime: z.string().min(1),
+    }),
+    dayId: z.string().uuid().min(1),
+    timeId: z.string().uuid().min(1).optional(),
   })).mutation(async ({
-    input: { startTime }
+    input: { time, dayId, timeId }
   }) => {
-    return await createStartTime(
-      startTime
+    return await createTime(
+      time, dayId, timeId
+    )
+  }),
+  deleteTime: t.procedure.input(z.object({
+    timeId: z.string().uuid().min(1),
+  })).mutation(async ({
+    input: { timeId }
+  }) => {
+    return await deleteTime(
+      timeId
     )
   }),
 

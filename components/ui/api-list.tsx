@@ -6,7 +6,7 @@ import { ApiAlert } from "./api-alert";
 
 interface ApiListProps {
   entityName: string;
-  entityIdName: string;
+  entityIdName: string | string[];
 }
 
 export const ApiList: React.FC<ApiListProps> = ({

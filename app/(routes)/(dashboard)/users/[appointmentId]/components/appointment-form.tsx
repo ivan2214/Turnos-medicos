@@ -92,28 +92,12 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     try {
       setLoading(true);
 
-      createApointment.mutate(
-        {
-          dayId: data.dayId,
-          userId: data.userId,
-        },
-        {
-          onSuccess(data, variables, context) {
-            toast({
-              title: toastMessage,
-              description: "Appointment updated.",
-            });
-          },
-          onError(error, variables, context) {
-            toast({
-              title: "Something went wrong.",
-              description: error.message,
-            });
-          },
-        },
-      );
-      router.push(`/appointments`);
+      createApointment.mutate({
+        dayId: data.dayId,
+        userId: data.userId,
+      });
       router.refresh();
+      router.push(`/appointments`);
       toast({
         title: toastMessage,
       });

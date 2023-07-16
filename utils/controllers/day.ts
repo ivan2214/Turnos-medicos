@@ -7,6 +7,7 @@ export const getDays = async () => {
     },
     include: {
       appointments: true,
+      Time: true
     },
   });
 };

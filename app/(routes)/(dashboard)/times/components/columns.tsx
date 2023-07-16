@@ -7,16 +7,15 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDownIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export type AppointmentColumn = {
+export type TimeColumn = {
   id: string;
-  busy: boolean;
-  name: string;
-  email: string;
+  startTime: string;
+  endTime: string;
   day: string;
   createdAt: string;
 };
 
-export const columns: ColumnDef<AppointmentColumn>[] = [
+export const columns: ColumnDef<TimeColumn>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -37,43 +36,20 @@ export const columns: ColumnDef<AppointmentColumn>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "day",
-    header: "Day",
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
     accessorKey: "startTime",
-    header: "StartTime",
+    header: "Comienza",
   },
   {
     accessorKey: "endTime",
-    header: "EndtTime",
+    header: "Termina",
   },
   {
-    accessorKey: "busy",
-    header: "Busy",
+    accessorKey: "day",
+    header: "Dia",
   },
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: "Creado",
   },
   {
     id: "actions",

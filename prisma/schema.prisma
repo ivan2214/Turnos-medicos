@@ -74,33 +74,23 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model StartTime {
-  id        String      @id @default(uuid())
-  time      String   @unique
+model Time {
+  id        String   @id @default(uuid())
+  startTime String   @unique
+  endTime   String   @unique
   createdAt DateTime @default(now())
 
-  Day   Day? @relation(fields: [dayId], references: [id])
-  dayId String?
-
-  @@index([dayId])
-}
-
-model EndTime {
-  id        String      @id @default(uuid())
-  time      String   @unique
-  createdAt DateTime @default(now())
-
-  Day   Day? @relation(fields: [dayId], references: [id])
+  Day   Day?    @relation(fields: [dayId], references: [id])
   dayId String?
 
   @@index([dayId])
 }
 
 model Day {
-  id           String        @id @default(uuid())
-  weekday      String        @unique(sort: Asc)
-  createdAt    DateTime      @default(now())
-  startTimes   StartTime[]
-  endTimes     EndTime[]
+  id        String   @id @default(uuid())
+  weekday   String   @unique(sort: Asc)
+  createdAt DateTime @default(now())
+
   appointments Appointment[]
+  Time         Time[]
 }
