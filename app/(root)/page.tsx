@@ -27,27 +27,29 @@ export default async function DashboardPage() {
   if (!currentUser?.admin) return redirect("/needs-admin");
   return (
     <>
-      <div className="hidden flex-col md:flex">
-        <div className="flex-1 px-8">
-          <div className="flex items-center justify-between space-y-2">
+      <div className="flex-col overflow-x-hidden md:flex">
+        <div className="flex-1 lg:px-8">
+          <div className="flex flex-col items-center justify-between space-y-2 lg:flex-row">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col items-center space-x-2 lg:flex-row">
               <CalendarDateRangePicker />
               <Button>Download</Button>
             </div>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
-                Analytics
-              </TabsTrigger>
-              <TabsTrigger value="reports" disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value="notifications" disabled>
-                Notifications
-              </TabsTrigger>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="analytics" disabled>
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger value="reports" disabled>
+                  Reports
+                </TabsTrigger>
+                <TabsTrigger value="notifications" disabled>
+                  Notifications
+                </TabsTrigger>
+              </div>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -153,23 +155,23 @@ export default async function DashboardPage() {
                   </CardContent>
                 </Card>
               </div>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-7 lg:gap-4">
+                <Card className="w-full lg:col-span-4">
                   <CardHeader>
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
-                  <CardContent className="pl-2">
+                  <CardContent className="w-full">
                     <Overview />
                   </CardContent>
                 </Card>
-                <Card className="col-span-3">
+                <Card className="w-full lg:col-span-3">
                   <CardHeader>
                     <CardTitle>Recent Sales</CardTitle>
                     <CardDescription>
                       You made 265 sales this month.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="w-full">
                     <RecentSales />
                   </CardContent>
                 </Card>

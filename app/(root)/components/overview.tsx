@@ -1,6 +1,13 @@
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 const data = [
   {
@@ -72,6 +79,13 @@ export function Overview() {
           tickFormatter={(value: any) => `$${value}`}
         />
         <Bar dataKey="total" fill="#adfa1d" radius={[4, 4, 0, 0]} />
+        <Tooltip
+          contentStyle={{
+            backgroundColor: "#000",
+            border: "none",
+            borderRadius: "4px",
+          }}
+        />
       </BarChart>
     </ResponsiveContainer>
   );

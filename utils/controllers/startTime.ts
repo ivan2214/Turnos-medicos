@@ -7,7 +7,6 @@ export const getStartTimes = async () => {
     },
     include: {
       Day: true
-
     },
   });
 };
