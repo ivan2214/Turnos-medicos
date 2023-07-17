@@ -28,7 +28,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         gap-2 
       "
     >
-      <Heading center title={title} subtitle={subtitle} />
+      <Heading description={subtitle} title={title} />
       <div className="mt-4 w-48">
         {showReset && (
           <Button variant="outline" onClick={() => router.push("/")}>

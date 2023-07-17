@@ -15,11 +15,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useLoginModal, useRegisterModal } from "@/hooks";
 import { useCallback, useState } from "react";
 import Modal from "./ModalActions";
-import { ChromeIcon, GithubIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
@@ -146,11 +145,11 @@ const RegisterModal = () => {
     <div className="mt-3 flex flex-col gap-4">
       <hr />
       <Button variant="outline" onClick={() => signIn("google")}>
-      <Icons.google className="mr-2 h-4 w-4" />
+        <Icons.google className="mr-2 h-4 w-4" />
         Continue with Google
       </Button>
       <Button variant="outline" onClick={() => signIn("github")}>
-      <Icons.gitHub className="mr-2 h-4 w-4" />
+        <Icons.gitHub className="mr-2 h-4 w-4" />
         Continue with Github
       </Button>
       <div
