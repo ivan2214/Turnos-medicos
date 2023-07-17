@@ -31,7 +31,9 @@ export const DayClient: React.FC<DaysClientProps> = ({ data }) => {
         </Button>
       </div>
       <Separator />
-      <DataTable searchKey="startDay" columns={columns} data={data} />
+      <div className="hidden h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
+        <DataTable searchKey="day" columns={columns} data={data} />
+      </div>
       {process.env.NODE_ENV === "development" && (
         <>
           <Heading title="API" description="API Calls for Days" />

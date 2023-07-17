@@ -31,7 +31,9 @@ export const TimeClient: React.FC<TimesClientProps> = ({ data }) => {
         </Button>
       </div>
       <Separator />
-      <DataTable searchKey="startTime" columns={columns} data={data} />
+      <div className="hidden h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
+        <DataTable searchKey="startTime" columns={columns} data={data} />
+      </div>
       {process.env.NODE_ENV === "development" && (
         <>
           <Heading title="API" description="API Calls for Times" />
