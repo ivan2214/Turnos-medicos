@@ -28,14 +28,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const deleteUser = trpc.deleteUser.useMutation();
+  const deleteUser = trpc.deleteUserInternal.useMutation();
 
   const onConfirm = async () => {
     try {
       setLoading(true);
       deleteUser.mutate(
         {
-          timeId: data.id,
+          userId: data.id,
         },
         {
           onSuccess(data, variables, context) {

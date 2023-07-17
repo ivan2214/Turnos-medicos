@@ -21,84 +21,64 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Heading from "@/components/ui/heading";
 import AlertModal from "@/components/modals/alert-modal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Time, Day } from "@prisma/client";
+
+import { User, Day } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/utils/trpc";
 
 const formSchema = z.object({
-  dayId: z.string().uuid().min(1),
-  time: z.object({
-    startTime: z.string().min(1),
-    endTime: z.string().min(1),
-  }),
+  name: z.string().min(3),
+  email: z.string().email().min(3),
+  password: z.string().min(6),
 });
 
-type TimeFormValues = z.infer<typeof formSchema>;
+type UserFormValues = z.infer<typeof formSchema>;
 
-interface TimeFormProps {
-  initialData: Time | null;
-  days: Day[] | null | undefined;
+interface UserFormProps {
+  initialData: User | null;
 }
 
-export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
+export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
   const router = useRouter();
   const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const createTime = trpc.createTime.useMutation();
-  const deleteTime = trpc.deleteTime.useMutation();
+  const createUser = trpc.createUser.useMutation();
+  const deleteUserForm = trpc.deleteUserInternal.useMutation();
 
-  const title = initialData ? "Edit time" : "Create time";
-  const description = initialData ? "Edit a time." : "Add a new time";
-  const toastMessage = initialData ? "Time updated." : "Time created.";
+  const title = initialData ? "Edit user" : "Create user";
+  const description = initialData ? "Edit a user." : "Add a new user";
+  const toastMessage = initialData ? "User updated." : "User created.";
   const action = initialData ? "Save changes" : "Create";
 
   const defaultValues = initialData
     ? {
         ...initialData,
-        time: {
-          startTime: initialData.startTime,
-          endTime: initialData.endTime,
-        },
-        dayId: initialData.dayId ?? "",
       }
-    : {
-        time: {
-          startTime: "",
-          endTime: "",
-        },
-        dayId: "",
-      };
+    : {};
 
-  const form = useForm<TimeFormValues>({
+  const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  const onSubmit = async (data: TimeFormValues) => {
+  const onSubmit = async (data: UserFormValues) => {
     try {
       setLoading(true);
 
-      createTime.mutate(
+      createUser.mutate(
         {
-          time: data.time,
-          dayId: data.dayId,
-          timeId: initialData?.id,
+          email: data.email,
+          name: data.name,
+          password: data.password,
         },
         {
           onSuccess(data, variables, context) {
             toast({
               title: toastMessage,
-              description: "Time updated.",
+              description: "User updated.",
             });
           },
           onError(error, variables, context) {
@@ -109,9 +89,8 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
           },
         },
       );
-      router.push(`/times`);
+      router.push(`/users`);
       router.refresh();
-
     } catch (error: any) {
       toast({
         title: "Something went wrong.",
@@ -124,15 +103,15 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      deleteTime.mutate(
+      deleteUserForm.mutate(
         {
-          timeId: initialData?.id!,
+          userId: initialData?.id!,
         },
         {
           onSuccess(data, variables, context) {
             toast({
-              title: "Time deleted.",
-              description: "Time updated.",
+              title: "User deleted.",
+              description: "User updated.",
             });
           },
           onError(error, variables, context) {
@@ -143,7 +122,7 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
           },
         },
       );
-      router.push(`/times`);
+      router.push(`/users`);
       router.refresh();
     } catch (error: any) {
       toast({
@@ -185,15 +164,15 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
           <div className="gap-8 md:grid md:grid-cols-3">
             <FormField
               control={form.control}
-              name="time.startTime"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Comienza</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type="time" placeholder="17:00" {...field} />
+                    <Input type="text" placeholder="jhon" {...field} />
                   </FormControl>
                   <FormDescription>
-                    Porfavor ponga el horario en el que comienza el turno
+                    Porfavor introduzca un nombre
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -202,15 +181,19 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
 
             <FormField
               control={form.control}
-              name="time.endTime"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Termina</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="time" placeholder="17:30" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="jhon@gmail.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
-                    Porfavor ponga el horario en el que finaliza el turno
+                    Porfavor introduzca un email
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -219,32 +202,16 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
 
             <FormField
               control={form.control}
-              name="dayId"
+              name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Dia</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Seleccione un usuario"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {days?.map((day) => (
-                        <SelectItem key={day.id} value={day.id}>
-                          {day.weekday}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Porfavor introduzca una Contraseña
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

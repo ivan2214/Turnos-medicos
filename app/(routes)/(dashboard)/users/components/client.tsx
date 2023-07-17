@@ -26,7 +26,7 @@ export const UserClient: React.FC<UsersClientProps> = ({ data }) => {
           title={`Horarios (${data?.length})`}
           description="Gestiona las citas de tu consultorio"
         />
-        <Button onClick={() => router.push(`/times/new`)}>
+        <Button onClick={() => router.push(`/users/new`)}>
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
       </div>
@@ -37,7 +37,7 @@ export const UserClient: React.FC<UsersClientProps> = ({ data }) => {
           <Heading title="API" description="API Calls for Users" />
           <Separator />
           <ApiList
-            entityName="times"
+            entityName="users"
             entityIdName={["startUserId", "endUserId", "dayId"]}
           />
         </>

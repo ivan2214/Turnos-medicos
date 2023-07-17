@@ -1,6 +1,6 @@
 import { createAppointment, deleteAppointment, getApointment, getAppointments } from "@/utils/controllers/appointment";
 import { createDay, deleteDay, getDay, getDays } from "@/utils/controllers/day";
-import { createUser, getUser, getUsers } from "@/utils/controllers/user";
+import { createUser, deleteUser, getUser, getUsers } from "@/utils/controllers/user";
 import { createTime, deleteTime, getTime, getTimes } from "@/utils/controllers/time";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
@@ -132,6 +132,15 @@ export const appRouter = t.router({
     input: { userId }
   }) => {
     return await getUser(userId)
+  }),
+  deleteUserInternal: t.procedure.input(z.object({
+    userId: z.string().uuid().min(1),
+  })).mutation(async ({
+    input: { userId }
+  }) => {
+    return await deleteUser(
+      userId
+    )
   }),
   createUser: t.procedure.input(z.object({
     email: z.string().min(3),
