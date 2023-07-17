@@ -35,16 +35,38 @@ export const columns: ColumnDef<AppointmentColumn>[] = [
         aria-label="Select row"
       />
     ),
-    enableSorting: false,
-    enableHiding: false,
+    enableSorting: true,
+    enableHiding: true,
   },
   {
     accessorKey: "day",
-    header: "Day",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Dia
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("day")}</div>,
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          nombre
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "email",
@@ -63,19 +85,73 @@ export const columns: ColumnDef<AppointmentColumn>[] = [
   },
   {
     accessorKey: "startTime",
-    header: "StartTime",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Comienza
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("startTime")}</div>
+    ),
   },
   {
     accessorKey: "endTime",
-    header: "EndtTime",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Termina
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("endTime")}</div>
+    ),
   },
   {
     accessorKey: "busy",
-    header: "Busy",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Ocupado
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">
+        {row.getValue("busy") === true ? "Ocupado" : "No ocupado"}
+      </div>
+    ),
   },
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Creado
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("createdAt")}</div>
+    ),
   },
   {
     id: "actions",

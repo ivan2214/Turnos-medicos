@@ -34,7 +34,7 @@ export const appRouter = t.router({
     )
   }),
   createAppointmentInternal: t.procedure.input(z.object({
-    appointmentId: z.string().uuid().min(1),
+    appointmentId: z.string().uuid().min(1).optional(),
     userId: z.string().uuid().min(1),
     dayId: z.string().uuid().min(1),
     busy: z.boolean().optional().default(true),
@@ -47,11 +47,11 @@ export const appRouter = t.router({
     input: { appointmentId, userId, dayId, time, busy }
   }) => {
     return await createAppointment(
-      appointmentId,
       userId,
       dayId,
       busy,
-      time
+      time,
+      appointmentId
     )
   }),
 

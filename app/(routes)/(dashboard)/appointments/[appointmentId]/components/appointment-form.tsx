@@ -154,7 +154,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     if (timeEquals) {
       createAppointmentForm.mutate(
         {
-          appointmentId: initialData ? initialData.id : "",
           dayId: data.dayId,
           userId: data.userId,
           busy: data.busy,
@@ -163,18 +162,13 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
             startTime: data.time.startTime,
             endTime: data.time.endTime,
           },
+          appointmentId: initialData?.id && initialData.id,
         },
         {
           onSuccess(data, variables, context) {
             toast({
-              title: "You submitted the following values:",
-              description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                  <code className="text-white">
-                    {JSON.stringify(data, null, 2)}
-                  </code>
-                </pre>
-              ),
+              title: "Su turno se creo con exito",
+              description: "Porfavor aguarda mientras es redirigido",
             });
             router.push(`/appointments`);
             router.refresh();
@@ -206,8 +200,8 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
         {
           onSuccess(data, variables, context) {
             toast({
-              title: "Turno eliminado.",
-              description: "Turno actualizado.",
+              title: "Su turno se elimino.",
+              description: "Turno Eliminado con exito.",
             });
           },
           onError(error, variables, context) {
@@ -218,7 +212,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           },
         },
       );
-      router.push(`/times`);
+      router.push(`/appointments`);
       router.refresh();
     } catch (error: any) {
       toast({

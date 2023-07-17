@@ -30,39 +30,32 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const { toast } = useToast();
   const deleteAppointmentForm = trpc.deleteAppointmentInteral.useMutation();
 
-  const onConfirm = async () => {
-    try {
-      setLoading(true);
-      deleteAppointmentForm.mutate(
-        {
-          appointmentId: data?.id!,
+  const onConfirm = () => {
+    setLoading(true);
+    deleteAppointmentForm.mutate(
+      {
+        appointmentId: data?.id,
+      },
+      {
+        onSuccess(data, variables, context) {
+          toast({
+            title: "Turno eliminado.",
+            description: "Turno Eliminado.",
+          });
         },
-        {
-          onSuccess(data, variables, context) {
-            toast({
-              title: "Turno eliminado.",
-              description: "Turno actualizado.",
-            });
-          },
-          onError(error, variables, context) {
-            toast({
-              title: "Algo salió mal.",
-              description: error.message,
-            });
-          },
+        onError(error, variables, context) {
+          toast({
+            title: "Algo salió mal.",
+            description: error.message,
+          });
         },
-      );
+      },
+    );
+    setLoading(false);
+    setOpen(false);
+    setTimeout(() => {
       router.refresh();
-
-      router.push(`/appointments`);
-    } catch (error) {
-      toast({
-        title: "Something went wrong",
-      });
-    } finally {
-      setLoading(false);
-      setOpen(false);
-    }
+    }, 600);
   };
 
   const onCopy = (id: string) => {
