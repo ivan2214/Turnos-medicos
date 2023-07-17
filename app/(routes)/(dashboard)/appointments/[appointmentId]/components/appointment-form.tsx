@@ -29,13 +29,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Time, Day, Appointment, User } from "@prisma/client";
+import { Time, Day, Appointment, Patient } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/utils/trpc";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
-  userId: z.string().uuid().min(1),
+  patientId: z.string().uuid().min(1),
   dayId: z.string().uuid().min(1),
   busy: z.boolean().default(true).optional(),
   time: z.object({
@@ -49,8 +49,8 @@ interface InitialDate {
   id: string;
   busy: boolean;
   createdAt: Date;
-  user: User | null;
-  userId: string | null;
+  patient: Patient | null;
+  patientId: string | null;
   day: Day | null;
   dayId: string | null;
   time: Time | null;
@@ -59,7 +59,7 @@ interface InitialDate {
 
 interface AppointmentFormProps {
   initialData: InitialDate | null;
-  users: User[];
+  patients: Patient[];
   days: Day[];
   times: Time[];
 }
@@ -67,7 +67,7 @@ interface AppointmentFormProps {
 export const AppointmentForm: React.FC<AppointmentFormProps> = ({
   initialData,
   days,
-  users,
+  patients,
   times,
 }) => {
   const params = useParams();
@@ -98,7 +98,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     ? {
         ...initialData,
         dayId: initialData.dayId ?? "",
-        userId: initialData.userId ?? "",
+        patientId: initialData.patientId ?? "",
         time: {
           timeId: initialData.time?.id,
           startTime: initialData.time?.startTime,
@@ -107,7 +107,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       }
     : {
         busy: false,
-        userId: "",
+        patientId: "",
         dayId: "",
         time: {
           timeId: "",
@@ -155,7 +155,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       createAppointmentForm.mutate(
         {
           dayId: data.dayId,
-          userId: data.userId,
+          patientId: data.patientId,
           busy: data.busy,
           time: {
             timeId: timeEquals.id,
@@ -171,7 +171,9 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               description: "Porfavor aguarda mientras es redirigido",
             });
             router.push(`/appointments`);
-            router.refresh();
+            setTimeout(() => {
+              router.refresh();
+            }, 600);
           },
           onError(error, variables, context) {
             toast({
@@ -213,7 +215,9 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
         },
       );
       router.push(`/appointments`);
-      router.refresh();
+      setTimeout(() => {
+        router.refresh();
+      }, 600);
     } catch (error: any) {
       toast({
         title: "Something went wrong.",
@@ -254,10 +258,10 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <div className="gap-8 md:grid md:grid-cols-3">
             <FormField
               control={form.control}
-              name="userId"
+              name="patientId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Users</FormLabel>
+                  <FormLabel>Patients</FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -271,9 +275,9 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                     </FormControl>
                     <SelectContent>
                       <SelectGroup>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.name}
+                        {patients.map((patient) => (
+                          <SelectItem key={patient.id} value={patient.id}>
+                            {patient.name}
                           </SelectItem>
                         ))}
                       </SelectGroup>

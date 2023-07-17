@@ -13,7 +13,7 @@ const AppointmentPage = async ({
     },
     include: {
       day: true,
-      user: true,
+      patient: true,
       time: true,
     },
   });
@@ -30,7 +30,7 @@ const AppointmentPage = async ({
     },
   });
 
-  const users = await prismadb.user.findMany({
+  const patients = await prismadb.patient.findMany({
     orderBy: {
       name: "asc",
     },
@@ -43,7 +43,7 @@ const AppointmentPage = async ({
         <AppointmentForm
           times={times}
           days={days}
-          users={users}
+          patients={patients}
           initialData={appointment}
         />
       </div>

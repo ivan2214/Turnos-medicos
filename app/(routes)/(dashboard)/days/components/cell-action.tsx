@@ -51,7 +51,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           },
         },
       );
-      router.refresh();
+      setTimeout(() => {
+        router.refresh();
+      }, 600);
 
       router.push(`/days`);
     } catch (error) {

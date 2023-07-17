@@ -14,7 +14,7 @@ export const getUsers = async () => {
       name: "asc",
     },
     include: {
-      appointments: true,
+      accounts: true
     },
   });
 };
@@ -24,6 +24,10 @@ export const getUser = async (userId: string) => {
     where: {
       id: userId,
     },
+    include:
+    {
+      accounts: true
+    }
   });
 };
 export const deleteUser = async (userId: string) => {

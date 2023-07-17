@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
+import { es } from "date-fns/locale";
 
 export function CalendarDateRangePicker({
   className,
@@ -38,8 +39,13 @@ export function CalendarDateRangePicker({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {format(date.from, "LLL dd, y", {
+                    locale: es,
+                  })}{" "}
+                  -{" "}
+                  {format(date.to, "LLL dd, y", {
+                    locale: es,
+                  })}
                 </>
               ) : (
                 format(date.from, "LLL dd, y")
@@ -51,6 +57,7 @@ export function CalendarDateRangePicker({
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="end">
           <Calendar
+            locale={es}
             initialFocus
             mode="range"
             defaultMonth={date?.from}

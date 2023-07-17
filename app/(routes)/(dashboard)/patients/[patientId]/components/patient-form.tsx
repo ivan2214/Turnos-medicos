@@ -22,36 +22,51 @@ import { Separator } from "@/components/ui/separator";
 import Heading from "@/components/ui/heading";
 import AlertModal from "@/components/modals/alert-modal";
 
-import { User, Day } from "@prisma/client";
+import { HealthInsurance, Patient } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/utils/trpc";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string().min(3),
   email: z.string().email().min(3),
-  password: z.string().min(6),
+  healthInsuranceId: z.string().uuid().optional(),
 });
 
-type UserFormValues = z.infer<typeof formSchema>;
+type PatientFormValues = z.infer<typeof formSchema>;
 
-interface UserFormProps {
-  initialData: User | null;
+interface PatientFormProps {
+  initialData: Patient | null;
+  healthInsurances: HealthInsurance[] | null | undefined;
 }
 
-export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
+export const PatientForm: React.FC<PatientFormProps> = ({
+  initialData,
+  healthInsurances,
+}) => {
   const router = useRouter();
   const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const createUser = trpc.createUser.useMutation();
-  const deleteUserForm = trpc.deleteUserInternal.useMutation();
+  const createPatient = trpc.createPatientInternal.useMutation();
+  const deletePatientForm = trpc.deletePatientInternal.useMutation();
 
-  const title = initialData ? "Edit user" : "Create user";
-  const description = initialData ? "Edit a user." : "Add a new user";
-  const toastMessage = initialData ? "User updated." : "User created.";
-  const action = initialData ? "Save changes" : "Create";
+  const title = initialData ? "Editar patient" : "Crear patient";
+  const description = initialData
+    ? "Editar a patient."
+    : "Añadir un nuevo paciente";
+  const toastMessage = initialData
+    ? "Paciente Actualizado."
+    : "Paciente creado.";
+  const action = initialData ? "Guardar cambios" : "Crear";
 
   const defaultValues = initialData
     ? {
@@ -59,26 +74,26 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
       }
     : {};
 
-  const form = useForm<UserFormValues>({
+  const form = useForm<PatientFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  const onSubmit = async (data: UserFormValues) => {
+  const onSubmit = async (data: PatientFormValues) => {
     try {
       setLoading(true);
 
-      createUser.mutate(
+      createPatient.mutate(
         {
           email: data.email,
           name: data.name,
-          password: data.password,
+          healthInsuranceId: data.healthInsuranceId,
         },
         {
           onSuccess(data, variables, context) {
             toast({
               title: toastMessage,
-              description: "User updated.",
+              description: "Patient updated.",
             });
           },
           onError(error, variables, context) {
@@ -89,8 +104,10 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
           },
         },
       );
-      router.push(`/users`);
-      router.refresh();
+      router.push(`/patients`);
+      setTimeout(() => {
+        router.refresh();
+      }, 600);
     } catch (error: any) {
       toast({
         title: "Something went wrong.",
@@ -103,15 +120,15 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      deleteUserForm.mutate(
+      deletePatientForm.mutate(
         {
-          userId: initialData?.id!,
+          patientId: initialData?.id!,
         },
         {
           onSuccess(data, variables, context) {
             toast({
-              title: "User deleted.",
-              description: "User updated.",
+              title: "Patient deleted.",
+              description: "Patient updated.",
             });
           },
           onError(error, variables, context) {
@@ -122,8 +139,10 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
           },
         },
       );
-      router.push(`/users`);
-      router.refresh();
+      router.push(`/patients`);
+      setTimeout(() => {
+        router.refresh();
+      }, 600);
     } catch (error: any) {
       toast({
         title: "Something went wrong.",
@@ -202,16 +221,35 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
 
             <FormField
               control={form.control}
-              name="password"
+              name="healthInsuranceId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Porfavor introduzca una Contraseña
-                  </FormDescription>
+                  <FormLabel>Obra social</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Seleccione una obra socialll"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {healthInsurances?.map((healthInsurance) => (
+                        <SelectItem
+                          key={healthInsurance?.id}
+                          value={healthInsurance?.id}
+                        >
+                          {healthInsurance?.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

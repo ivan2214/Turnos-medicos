@@ -11,7 +11,7 @@ const page = async () => {
   const appointments = await prisma.appointment.findMany({
     include: {
       day: true,
-      user: true,
+      patient: true,
       time: true,
     },
     orderBy: {
@@ -25,8 +25,8 @@ const page = async () => {
     (item) => ({
       id: item.id.toString(),
       busy: Boolean(item.busy),
-      name: item.user?.name ? item.user.name || "" : "",
-      email: item.user?.email ? item.user.email || "" : "",
+      name: item.patient?.name ? item.patient.name || "" : "",
+      email: item.patient?.email ? item.patient.email || "" : "",
       day: item.day ? item.day.weekday || "" : "",
       startTime: item.time ? item.time.startTime || "" : "",
       endTime: item.time ? item.time.endTime || "" : "",

@@ -47,9 +47,25 @@ model User {
   image          String?
   admin          Boolean?
 
-  appointments Appointment[]
-  accounts     Account[]
-  sessions     Session[]
+  accounts Account[]
+  sessions Session[]
+}
+
+model Patient {
+  id                String           @id @default(uuid())
+  name              String?
+  email             String?          @unique
+  healthInsurance   HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  appointments      Appointment[]
+  healthInsuranceId String?
+
+  @@index([healthInsuranceId])
+}
+
+model HealthInsurance {
+  id       String    @id @default(uuid())
+  name     String?   @unique
+  patients Patient[]
 }
 
 model Appointment {
@@ -57,16 +73,16 @@ model Appointment {
   busy      Boolean
   createdAt DateTime @default(now())
 
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String?
-  day    Day?    @relation(fields: [dayId], references: [id], onDelete: Cascade)
-  dayId  String?
-  time   Time?   @relation(fields: [timeId], references: [id], onDelete: Cascade)
-  timeId String?
+  day       Day?    @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  dayId     String?
+  time      Time?   @relation(fields: [timeId], references: [id], onDelete: Cascade)
+  timeId    String?
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId String
 
-  @@index([userId])
   @@index([dayId])
   @@index([timeId])
+  @@index([patientId])
 }
 
 model VerificationToken {

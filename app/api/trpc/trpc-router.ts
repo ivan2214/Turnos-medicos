@@ -5,6 +5,7 @@ import { createTime, deleteTime, getTime, getTimes } from "@/utils/controllers/t
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
+import { createPatient, deletePatient, getPatient, getPatients } from "@/utils/controllers/patient";
 
 const t = initTRPC.create({
   transformer: superjson,
@@ -35,7 +36,7 @@ export const appRouter = t.router({
   }),
   createAppointmentInternal: t.procedure.input(z.object({
     appointmentId: z.string().uuid().min(1).optional(),
-    userId: z.string().uuid().min(1),
+    patientId: z.string().uuid().min(1),
     dayId: z.string().uuid().min(1),
     busy: z.boolean().optional().default(true),
     time: z.object({
@@ -44,10 +45,10 @@ export const appRouter = t.router({
       endTime: z.string().min(1),
     })
   })).mutation(async ({
-    input: { appointmentId, userId, dayId, time, busy }
+    input: { appointmentId, patientId, dayId, time, busy }
   }) => {
     return await createAppointment(
-      userId,
+      patientId,
       dayId,
       busy,
       time,
@@ -154,6 +155,42 @@ export const appRouter = t.router({
         email,
         name,
         password
+      }
+    )
+  }),
+
+  //Patients
+  getPatients: t.procedure.query(async () => {
+    return await getPatients()
+  }),
+  getPatient: t.procedure.input(z.object({
+    patientId: z.string().uuid(),
+  })).query(async ({
+    input: { patientId }
+  }) => {
+    return await getPatient(patientId)
+  }),
+  deletePatientInternal: t.procedure.input(z.object({
+    patientId: z.string().uuid().min(1),
+  })).mutation(async ({
+    input: { patientId }
+  }) => {
+    return await deletePatient(
+      patientId
+    )
+  }),
+  createPatientInternal: t.procedure.input(z.object({
+    email: z.string().min(3),
+    name: z.string().min(3),
+    healthInsuranceId: z.string().uuid().optional(),
+  })).mutation(async ({
+    input: { email, name, healthInsuranceId }
+  }) => {
+    return await createPatient(
+      {
+        email,
+        name,
+        healthInsuranceId
       }
     )
   }),

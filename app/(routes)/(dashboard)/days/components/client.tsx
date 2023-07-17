@@ -23,16 +23,21 @@ export const DayClient: React.FC<DaysClientProps> = ({ data }) => {
     <>
       <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
         <Heading
-          title={`Horarios (${data?.length})`}
-          description="Gestiona las citas de tu consultorio"
+          title={`Dias (${data?.length})`}
+          description="Gestiona los dias de tu consultorio"
         />
         <Button onClick={() => router.push(`/days/new`)}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
+          <Plus className="mr-2 h-4 w-4" /> Añadir nuevo
         </Button>
       </div>
       <Separator />
       <div className="hidden h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
-        <DataTable searchKey="day" columns={columns} data={data} />
+        <DataTable
+          query="Dia de la semana"
+          searchKey="day"
+          columns={columns}
+          data={data}
+        />
       </div>
       {process.env.NODE_ENV === "development" && (
         <>

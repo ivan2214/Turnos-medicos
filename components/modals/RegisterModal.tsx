@@ -75,7 +75,9 @@ const RegisterModal = () => {
       ),
     });
     registerModal.onClose();
-    router.refresh();
+    setTimeout(() => {
+      router.refresh();
+    }, 500);
   }
 
   const onToggle = useCallback(() => {

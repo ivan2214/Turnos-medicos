@@ -27,12 +27,17 @@ export const TimeClient: React.FC<TimesClientProps> = ({ data }) => {
           description="Gestiona los horarios de tu consultorio"
         />
         <Button onClick={() => router.push(`/times/new`)}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
+          <Plus className="mr-2 h-4 w-4" /> Añadir nuevo
         </Button>
       </div>
       <Separator />
       <div className="hidden h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
-        <DataTable searchKey="startTime" columns={columns} data={data} />
+        <DataTable
+          query="Comienzo del horario"
+          searchKey="startTime"
+          columns={columns}
+          data={data}
+        />
       </div>
       {process.env.NODE_ENV === "development" && (
         <>

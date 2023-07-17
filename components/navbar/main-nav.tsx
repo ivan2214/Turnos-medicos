@@ -45,6 +45,11 @@ export const MainNav: React.FC<MainNavProps> = ({
       active: pathname === "/days",
     },
     {
+      href: "/patients",
+      label: "Gestionar Pacientes",
+      active: pathname === "/patients",
+    },
+    {
       href: "/users",
       label: "Gestionar Usuarios",
       active: pathname === "/users",
@@ -52,10 +57,7 @@ export const MainNav: React.FC<MainNavProps> = ({
   ];
 
   return (
-    <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      {...props}
-    >
+    <nav className={cn("flex items-center gap-5", className)} {...props}>
       {!admin &&
         routes.map((route) => {
           const condition = !route.href.startsWith("/dashboard");

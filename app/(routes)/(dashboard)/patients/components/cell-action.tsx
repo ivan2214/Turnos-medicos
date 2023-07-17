@@ -1,8 +1,7 @@
 "use client";
 
-import axios from "axios";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AlertModal from "@/components/modals/alert-modal";
 
@@ -15,12 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { UserColumn } from "./columns";
+import { PatientColumn } from "./columns";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/utils/trpc";
 
 interface CellActionProps {
-  data: UserColumn;
+  data: PatientColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -28,20 +27,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const deleteUser = trpc.deleteUserInternal.useMutation();
+  const deletePatient = trpc.deletePatientInternal.useMutation();
 
   const onConfirm = async () => {
     try {
       setLoading(true);
-      deleteUser.mutate(
+      deletePatient.mutate(
         {
-          userId: data.id,
+          patientId: data.id,
         },
         {
           onSuccess(data, variables, context) {
             toast({
-              title: "User deleted.",
-              description: "User Deleted successfully.",
+              title: "Patient deleted.",
+              description: "Patient Deleted successfully.",
             });
           },
           onError(error, variables, context) {
@@ -52,9 +51,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           },
         },
       );
-      router.refresh();
+      setTimeout(() => {
+        router.refresh();
+      }, 600);
 
-      router.push(`/times`);
+      router.push(`/patients`);
     } catch (error) {
       toast({
         title: "Something went wrong",
@@ -68,7 +69,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({
-      title: "StartUser ID copied to clipboard.",
+      title: "StartPatient ID copied to clipboard.",
     });
   };
 
@@ -92,7 +93,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={() => onCopy(data.id)}>
             <Copy className="mr-2 h-4 w-4" /> Copy Id
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push(`/times/${data.id}`)}>
+          <DropdownMenuItem onClick={() => router.push(`/patients/${data.id}`)}>
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>

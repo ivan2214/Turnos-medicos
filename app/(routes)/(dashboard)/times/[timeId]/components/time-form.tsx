@@ -110,7 +110,9 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
         },
       );
       router.push(`/times`);
-      router.refresh();
+      setTimeout(() => {
+        router.refresh();
+      }, 600);
 
     } catch (error: any) {
       toast({
@@ -144,7 +146,9 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
         },
       );
       router.push(`/times`);
-      router.refresh();
+      setTimeout(() => {
+        router.refresh();
+      }, 600);
     } catch (error: any) {
       toast({
         title: "Something went wrong.",

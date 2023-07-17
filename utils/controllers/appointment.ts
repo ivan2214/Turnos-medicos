@@ -56,7 +56,7 @@ export const deleteAppointment = async (appointmentId: string) => {
 
 
 export const createAppointment = async (
-  userId: string,
+  patientId: string,
   dayId: string,
   busy: boolean,
   timeProp: TimeProp,
@@ -64,16 +64,16 @@ export const createAppointment = async (
 ) => {
 
   if (appointmentId && appointmentId !== undefined && appointmentId !== "") {
-    if (appointmentId === "" || userId === "" || dayId === "" || timeProp.timeId == "") {
+    if (appointmentId === "" || patientId === "" || dayId === "" || timeProp.timeId == "") {
       throw new Error("Datos no validos")
     }
   }
 
-  if (userId === "" || dayId === "" || timeProp.timeId == "") {
+  if (patientId === "" || dayId === "" || timeProp.timeId == "") {
     throw new Error("Datos no validos")
   }
 
-  if (!userId || !dayId || !timeProp || !timeProp.startTime || !timeProp.endTime || !timeProp.timeId) {
+  if (!patientId || !dayId || !timeProp || !timeProp.startTime || !timeProp.endTime || !timeProp.timeId) {
     throw new Error("El formulario no es valido");
   }
 
@@ -86,9 +86,9 @@ export const createAppointment = async (
 
   let appointment
 
-  const user = await prisma.user.findUnique({
+  const patient = await prisma.patient.findUnique({
     where: {
-      id: userId,
+      id: patientId,
     },
   });
 
@@ -106,7 +106,7 @@ export const createAppointment = async (
   })
 
 
-  if (!user) {
+  if (!patient) {
     throw new Error("El paciente no fue encontrado");
   }
 
@@ -125,7 +125,7 @@ export const createAppointment = async (
       },
       data: {
         busy: busy,
-        userId: user.id,
+        patientId: patient.id,
         dayId: day.id,
         timeId: time.id
       },
@@ -136,7 +136,7 @@ export const createAppointment = async (
     data: {
       dayId: day.id,
       busy: busy,
-      userId: user.id,
+      patientId: patient.id,
       timeId: timeProp.timeId,
     },
   });

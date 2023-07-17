@@ -51,6 +51,11 @@ export function MainNavMobile({
       active: pathname === "/days",
     },
     {
+      href: "/patients",
+      label: "Gestionar Pacientes",
+      active: pathname === "/patients",
+    },
+    {
       href: "/users",
       label: "Gestionar Usuarios",
       active: pathname === "/users",

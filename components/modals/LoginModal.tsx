@@ -51,7 +51,9 @@ const LoginModal = () => {
           variant: "default",
           title: "Registered!",
         });
-        router.refresh();
+        setTimeout(() => {
+          router.refresh();
+        }, 500);
         loginModal.onClose();
       }
 

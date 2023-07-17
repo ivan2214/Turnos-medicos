@@ -14,16 +14,34 @@ import { RecentSales } from "./components/recent-sales";
 import getCurrentUser from "@/actions/getCurrentUser";
 import { redirect } from "next/navigation";
 
+import prisma from "@/app/libs/prismadb";
+import { Appointment, Patient } from "@prisma/client";
+
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Example dashboard app using the components.",
 };
 
 export default async function DashboardPage() {
+  const appointments: Appointment[] = await prisma.appointment.findMany({
+    include: {
+      time: true,
+      day: true,
+      patient: true,
+    },
+  });
+
+  const patients: Patient[] = await prisma.patient.findMany({
+    include: {
+      _count: true,
+    },
+  });
+
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     return redirect("/auth");
   }
+
   if (!currentUser?.admin) return redirect("/needs-admin");
   return (
     <>
@@ -161,7 +179,7 @@ export default async function DashboardPage() {
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="w-full">
-                    <Overview />
+                    <Overview appointments={appointments} patients={patients} />
                   </CardContent>
                 </Card>
                 <Card className="w-full lg:col-span-3">
