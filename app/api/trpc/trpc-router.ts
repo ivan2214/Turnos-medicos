@@ -34,18 +34,20 @@ export const appRouter = t.router({
     )
   }),
   createAppointmentInternal: t.procedure.input(z.object({
+    appointmentId: z.string().uuid().min(1),
     userId: z.string().uuid().min(1),
     dayId: z.string().uuid().min(1),
     busy: z.boolean().optional().default(true),
     time: z.object({
-      timeId: z.string().uuid().min(1).optional(),
+      timeId: z.string().uuid().min(1),
       startTime: z.string().min(1),
       endTime: z.string().min(1),
     })
   })).mutation(async ({
-    input: { userId, dayId, time, busy }
+    input: { appointmentId, userId, dayId, time, busy }
   }) => {
     return await createAppointment(
+      appointmentId,
       userId,
       dayId,
       busy,

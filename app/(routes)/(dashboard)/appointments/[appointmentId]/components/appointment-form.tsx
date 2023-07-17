@@ -154,6 +154,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     if (timeEquals) {
       createAppointmentForm.mutate(
         {
+          appointmentId: initialData ? initialData.id : "",
           dayId: data.dayId,
           userId: data.userId,
           busy: data.busy,

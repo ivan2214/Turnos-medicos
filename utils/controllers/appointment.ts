@@ -38,7 +38,7 @@ export const getApointment = async (appointmentId: string) => {
 
 
 type TimeProp = {
-  timeId?: string
+  timeId: string
   startTime: string
   endTime: string
 }
@@ -56,13 +56,18 @@ export const deleteAppointment = async (appointmentId: string) => {
 
 
 export const createAppointment = async (
+  appointmentId: string,
   userId: string,
   dayId: string,
   busy: boolean,
   timeProp: TimeProp
 ) => {
-  console.log("createAppointment", userId, dayId, busy, timeProp);
-  if (!userId || !dayId || !busy || !timeProp || !timeProp.startTime || !timeProp.endTime || !timeProp.timeId) {
+
+  if (appointmentId === "" || userId === "" || dayId === "" || timeProp.timeId == "") {
+    throw new Error("Datos no validos")
+  }
+
+  if (!appointmentId || !userId || !dayId || !busy || !timeProp || !timeProp.startTime || !timeProp.endTime || !timeProp.timeId) {
     throw new Error("El formulario no es valido");
   }
 
@@ -78,9 +83,9 @@ export const createAppointment = async (
     },
   });
 
-  const appointment: Appointment | null = await prisma.appointment.findFirst({
+  const appointment: Appointment | null = await prisma.appointment.findUnique({
     where: {
-      dayId: dayId,
+      id: appointmentId,
     },
   });
 
