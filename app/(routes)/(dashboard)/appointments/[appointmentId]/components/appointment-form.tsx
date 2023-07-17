@@ -1,7 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Trash } from "lucide-react";
@@ -44,8 +44,20 @@ const formSchema = z.object({
   }),
 });
 
+interface InitialDate {
+  id: string;
+  busy: boolean;
+  createdAt: Date;
+  user: User | null;
+  userId: string | null;
+  day: Day | null;
+  dayId: string | null;
+  time: Time | null;
+  timeId: string | null;
+}
+
 interface AppointmentFormProps {
-  initialData: Appointment | null;
+  initialData: InitialDate | null;
   users: User[];
   days: Day[];
   times: Time[];
@@ -74,6 +86,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
   ]);
 
   const createAppointmentForm = trpc.createAppointmentInternal.useMutation();
+  const deleteAppointmentForm = trpc.deleteAppointmentInteral.useMutation();
 
   const title = initialData ? "Editar turno" : "Crear turno";
   const description = initialData ? "Editar este turno." : "Añadir nuevo turno";
@@ -85,6 +98,11 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
         ...initialData,
         dayId: initialData.dayId ?? "",
         userId: initialData.userId ?? "",
+        time: {
+          timeId: initialData.time?.id,
+          startTime: initialData.time?.startTime,
+          endTime: initialData.time?.endTime,
+        },
       }
     : {
         busy: false,
@@ -97,8 +115,23 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
         dayId: "",
       };
 
+  useEffect(() => {
+    if (initialData) {
+      setFilterTime([
+        {
+          createdAt: initialData.createdAt,
+          dayId: initialData.dayId,
+          endTime: initialData.time?.endTime || "",
+          startTime: initialData.time?.startTime || "",
+          id: initialData.time?.id || "",
+        },
+      ]);
+    }
+  }, [initialData]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues,
   });
   function onSubmit(data: z.infer<typeof formSchema>) {
     const timeEquals = times.find(
@@ -143,23 +176,29 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     }
   }
 
-  /*   const onDelete = async () => {
+  const onDelete = async () => {
+    if (!initialData)
+      return toast({
+        title: "Ups algo salio mal",
+        description: "Es necesario seleccionar un turno para eliminarlo",
+      });
+
     try {
       setLoading(true);
-      deleteAppointment.mutate(
+      deleteAppointmentForm.mutate(
         {
-          timeId: initialData?.id!,
+          appointmentId: initialData?.id!,
         },
         {
           onSuccess(data, variables, context) {
             toast({
-              title: "Time deleted.",
-              description: "Time updated.",
+              title: "Turno eliminado.",
+              description: "Turno actualizado.",
             });
           },
           onError(error, variables, context) {
             toast({
-              title: "Something went wrong.",
+              title: "Algo salió mal.",
               description: error.message,
             });
           },
@@ -176,13 +215,13 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       setOpen(false);
     }
   };
- */
+
   return (
     <>
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
-        onConfirm={() => {}}
+        onConfirm={onDelete}
         loading={loading}
       />
       <div className="flex items-center justify-between">

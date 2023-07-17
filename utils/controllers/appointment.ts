@@ -43,6 +43,18 @@ type TimeProp = {
   endTime: string
 }
 
+export const deleteAppointment = async (appointmentId: string) => {
+
+  if (!appointmentId) throw new Error("No appointment found");
+
+  return prisma.appointment.delete({
+    where: {
+      id: appointmentId,
+    },
+  });
+};
+
+
 export const createAppointment = async (
   userId: string,
   dayId: string,

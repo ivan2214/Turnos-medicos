@@ -17,6 +17,7 @@ import {
 
 import { AppointmentColumn } from "./columns";
 import { useToast } from "@/components/ui/use-toast";
+import { trpc } from "@/utils/trpc";
 
 interface CellActionProps {
   data: AppointmentColumn;
@@ -27,15 +28,33 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const deleteAppointmentForm = trpc.deleteAppointmentInteral.useMutation();
 
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/trpc/appointments/${data.id}`);
-      toast({
-        title: "Appointment deleted.",
-      });
+      deleteAppointmentForm.mutate(
+        {
+          appointmentId: data?.id!,
+        },
+        {
+          onSuccess(data, variables, context) {
+            toast({
+              title: "Turno eliminado.",
+              description: "Turno actualizado.",
+            });
+          },
+          onError(error, variables, context) {
+            toast({
+              title: "Algo salió mal.",
+              description: error.message,
+            });
+          },
+        },
+      );
       router.refresh();
+
+      router.push(`/appointments`);
     } catch (error) {
       toast({
         title: "Something went wrong",
