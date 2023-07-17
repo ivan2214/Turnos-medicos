@@ -6,43 +6,35 @@ import { CellAction } from "./cell-action";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDownIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Account } from "@prisma/client";
+import Image from "next/image";
 
-export type AppointmentColumn = {
+export type UserColumn = {
   id: string;
-  busy: boolean;
   name: string;
   email: string;
-  day: string;
-  createdAt: string;
+  emailVerified: Date;
+  hashedPassword: string;
+  image: string;
+  admin: boolean;
+  account: string;
 };
 
-export const columns: ColumnDef<AppointmentColumn>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "day",
-    header: "Day",
-  },
+export const columns: ColumnDef<UserColumn>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nombre
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "email",
@@ -60,20 +52,44 @@ export const columns: ColumnDef<AppointmentColumn>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "startTime",
-    header: "StartTime",
+    accessorKey: "admin",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Admin
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("admin")}</div>,
   },
   {
-    accessorKey: "endTime",
-    header: "EndtTime",
-  },
-  {
-    accessorKey: "busy",
-    header: "Busy",
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Date",
+    accessorKey: "image",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Imagen
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="flex w-full items-center justify-start">
+        <Image
+          width={30}
+          height={30}
+          className="h-10 w-10 rounded-full"
+          src={row.getValue("image")}
+          alt={"Circulo redondeado con una imagen de perfil de una persona"}
+        />
+      </div>
+    ),
   },
   {
     id: "actions",

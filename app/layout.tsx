@@ -45,7 +45,9 @@ export default async function RootLayout({
               </ClientOnly>
               {currentUser?.admin && <Navbar currentUser={currentUser} />}
               <div
-                className={`container ${currentUser?.admin ? "lg:py-3" : ""}`}
+                className={`container ${
+                  currentUser?.admin ? "lg:py-3" : ""
+                } overflow-x-hidden`}
               >
                 {children}
               </div>

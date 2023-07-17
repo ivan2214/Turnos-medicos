@@ -1,79 +1,74 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, SortingColumn, SortingFn } from "@tanstack/react-table";
 
 import { CellAction } from "./cell-action";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDownIcon } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 
-export type AppointmentColumn = {
+export type DayColumn = {
   id: string;
-  busy: boolean;
-  name: string;
-  email: string;
-  day: string;
+  weekday: string;
   createdAt: string;
 };
 
-export const columns: ColumnDef<AppointmentColumn>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+const days = [
+  "lunes",
+  "martes",
+  "miércoles",
+  "jueves",
+  "viernes",
+  "sábado",
+  "domingo",
+];
+
+const sortByWeekday: SortingFn<DayColumn> = (rowA, rowB, columnId) => {
+  const dayA = days.indexOf(rowA.original.weekday.toLowerCase());
+  const dayB = days.indexOf(rowB.original.weekday.toLowerCase());
+
+  if (dayA < dayB) {
+    return -1;
+  } else if (dayA > dayB) {
+    return 1;
+  } else {
+    return 0;
+  }
+};
+
+export const columns: ColumnDef<DayColumn>[] = [
   {
     accessorKey: "day",
-    header: "Day",
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "email",
     header: ({ column }) => {
+      const sortingColumn = column as SortingColumn<DayColumn>;
+      const isSorted = sortingColumn.getIsSorted();
+      const sortDirection = isSorted
+        ? isSorted === "asc"
+          ? "desc"
+          : "asc"
+        : undefined;
+
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => sortingColumn.toggleSorting(undefined, false)}
         >
-          Email
-          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
+          Dia
+          {isSorted && (
+            <ArrowUpDownIcon
+              className={`ml-2 h-4 w-4 ${
+                sortDirection === "desc" ? "rotate-180 transform" : ""
+              }`}
+            />
+          )}
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "startTime",
-    header: "StartTime",
-  },
-  {
-    accessorKey: "endTime",
-    header: "EndtTime",
-  },
-  {
-    accessorKey: "busy",
-    header: "Busy",
+    sortingFn: sortByWeekday,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("day")}</div>,
   },
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: "Creado",
   },
   {
     id: "actions",

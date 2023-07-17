@@ -19,6 +19,16 @@ export const getDay = async (dayId: string) => {
     },
   });
 };
+export const deleteDay = async (dayId: string) => {
+
+  if (!dayId) throw new Error("dayId is required");
+
+  return prisma.day.delete({
+    where: {
+      id: dayId,
+    },
+  });
+};
 
 
 export const createDay = async (weekday: string,) => {

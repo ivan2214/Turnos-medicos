@@ -9,34 +9,39 @@ import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { ApiList } from "@/components/ui/api-list";
 
-import { AppointmentColumn, columns } from "./columns";
+import { UserColumn, columns } from "./columns";
 
-interface AppointmentsClientProps {
-  data: AppointmentColumn[];
+interface UsersClientProps {
+  data: UserColumn[];
 }
 
-export const AppointmentsClient: React.FC<AppointmentsClientProps> = ({
-  data,
-}) => {
+export const UserClient: React.FC<UsersClientProps> = ({ data }) => {
   const params = useParams();
   const router = useRouter();
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start gap-5 justify-between lg:flex-row">
         <Heading
-          title={`Appointments (${data.length})`}
-          description="Manage appointments for your store"
+          title={`Horarios (${data?.length})`}
+          description="Gestiona las citas de tu consultorio"
         />
-        <Button onClick={() => router.push(`/appointments/new`)}>
+        <Button onClick={() => router.push(`/times/new`)}>
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
-      <Heading title="API" description="API Calls for Appointments" />
-      <Separator />
-      <ApiList entityName="appointments" entityIdName="appointmentId" />
+      <DataTable searchKey="startUser" columns={columns} data={data} />
+      {process.env.NODE_ENV === "development" && (
+        <>
+          <Heading title="API" description="API Calls for Users" />
+          <Separator />
+          <ApiList
+            entityName="times"
+            entityIdName={["startUserId", "endUserId", "dayId"]}
+          />
+        </>
+      )}
     </>
   );
 };

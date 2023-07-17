@@ -1,8 +1,7 @@
 "use client";
 
-import axios from "axios";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AlertModal from "@/components/modals/alert-modal";
 
@@ -15,11 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { AppointmentColumn } from "./columns";
+import { DayColumn } from "./columns";
 import { useToast } from "@/components/ui/use-toast";
+import { trpc } from "@/utils/trpc";
 
 interface CellActionProps {
-  data: AppointmentColumn;
+  data: DayColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -27,15 +27,33 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const deleteDay = trpc.deleteDayInternal.useMutation();
 
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/trpc/appointments/${data.id}`);
-      toast({
-        title: "Appointment deleted.",
-      });
+      deleteDay.mutate(
+        {
+          dayId: data.id,
+        },
+        {
+          onSuccess(data, variables, context) {
+            toast({
+              title: "Dia eliminado.",
+              description: "Dia Eliminado con exito.",
+            });
+          },
+          onError(error, variables, context) {
+            toast({
+              title: "Something went wrong.",
+              description: error.message,
+            });
+          },
+        },
+      );
       router.refresh();
+
+      router.push(`/days`);
     } catch (error) {
       toast({
         title: "Something went wrong",
@@ -49,7 +67,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({
-      title: "Appointment ID copied to clipboard.",
+      title: "StartDay ID copied to clipboard.",
     });
   };
 
@@ -73,9 +91,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={() => onCopy(data.id)}>
             <Copy className="mr-2 h-4 w-4" /> Copy Id
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/appointments/${data.id}`)}
-          >
+          <DropdownMenuItem onClick={() => router.push(`/days/${data.id}`)}>
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>

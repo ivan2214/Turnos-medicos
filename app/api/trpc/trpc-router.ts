@@ -1,5 +1,5 @@
 import { createAppointment, deleteAppointment, getApointment, getAppointments } from "@/utils/controllers/appointment";
-import { createDay, getDay, getDays } from "@/utils/controllers/day";
+import { createDay, deleteDay, getDay, getDays } from "@/utils/controllers/day";
 import { createUser, getUser, getUsers } from "@/utils/controllers/user";
 import { createTime, deleteTime, getTime, getTimes } from "@/utils/controllers/time";
 import { initTRPC } from "@trpc/server";
@@ -66,6 +66,15 @@ export const appRouter = t.router({
   }) => {
     if (!dayId) return null;
     return await getDay(dayId)
+  }),
+  deleteDayInternal: t.procedure.input(z.object({
+    dayId: z.string().uuid().min(1),
+  })).mutation(async ({
+    input: { dayId }
+  }) => {
+    return await deleteDay(
+      dayId
+    )
   }),
   createDay: t.procedure.input(z.object({
     weekday: z.string().min(3),

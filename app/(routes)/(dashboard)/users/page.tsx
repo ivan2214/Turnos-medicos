@@ -2,39 +2,36 @@ import { format } from "date-fns";
 
 import prisma from "@/app/libs/prismadb";
 
-import { AppointmentsClient } from "./components/client";
-import { AppointmentColumn } from "./components/columns";
+import { UserClient } from "./components/client";
+import { UserColumn } from "./components/columns";
 
-export const revalidate = 60; // revalidate this page every 60 seconds
+export const revalidate = 0; // revalidate this page every 60 seconds
 
 const page = async () => {
-  const appointments = await prisma.appointment.findMany({
+  const users = await prisma.user.findMany({
     include: {
-      day: true,
-      user: true,
+      accounts: true,
     },
     orderBy: {
-      day: {
-        weekday: "asc",
-      },
+      name: "asc",
     },
   });
 
-  const formattedAppointments: AppointmentColumn[] = appointments?.map(
-    (item) => ({
-      id: item.id.toString(),
-      busy: Boolean(item.busy),
-      name: item.user?.name ? item.user.name || "" : "",
-      email: item.user?.email ? item.user.email || "" : "",
-      day: item.day ? item.day.weekday || "" : "",
-      createdAt: format(item.createdAt, "MMMM do, yyyy"),
-    }),
-  );
+  const formattedUsers: UserColumn[] = users?.map((item) => ({
+    id: item.id,
+    name: item.name ?? "",
+    email: item.email ?? "",
+    emailVerified: item.emailVerified ?? new Date(),
+    hashedPassword: item.hashedPassword ?? "",
+    image: item.image ?? "",
+    admin: item.admin ?? false,
+    account: item.accounts[0].provider,
+  }));
 
   return (
-    <div className="flex-col">
+    <div className="flex-col overflow-x-hidden">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <AppointmentsClient data={formattedAppointments} />
+        <UserClient data={formattedUsers} />
       </div>
     </div>
   );

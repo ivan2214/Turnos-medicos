@@ -2,39 +2,33 @@ import { format } from "date-fns";
 
 import prisma from "@/app/libs/prismadb";
 
-import { AppointmentsClient } from "./components/client";
-import { AppointmentColumn } from "./components/columns";
+import { DayClient } from "./components/client";
+import { DayColumn } from "./components/columns";
 
 export const revalidate = 60; // revalidate this page every 60 seconds
 
 const page = async () => {
-  const appointments = await prisma.appointment.findMany({
+  const days = await prisma.day.findMany({
     include: {
-      day: true,
-      user: true,
+      appointments: true,
+      Time: true,
     },
     orderBy: {
-      day: {
-        weekday: "asc",
-      },
+      weekday: "asc",
     },
   });
 
-  const formattedAppointments: AppointmentColumn[] = appointments?.map(
-    (item) => ({
-      id: item.id.toString(),
-      busy: Boolean(item.busy),
-      name: item.user?.name ? item.user.name || "" : "",
-      email: item.user?.email ? item.user.email || "" : "",
-      day: item.day ? item.day.weekday || "" : "",
-      createdAt: format(item.createdAt, "MMMM do, yyyy"),
-    }),
-  );
+  const formattedDays: DayColumn[] = days?.map((item) => ({
+    id: item.id,
+    day: item.weekday,
+    weekday: item.weekday,
+    createdAt: format(item.createdAt, "MMMM do, yyyy"),
+  }));
 
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <AppointmentsClient data={formattedAppointments} />
+        <DayClient data={formattedDays} />
       </div>
     </div>
   );

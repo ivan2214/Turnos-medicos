@@ -15,11 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { AppointmentColumn } from "./columns";
+import { UserColumn } from "./columns";
 import { useToast } from "@/components/ui/use-toast";
+import { trpc } from "@/utils/trpc";
 
 interface CellActionProps {
-  data: AppointmentColumn;
+  data: UserColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -27,15 +28,33 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const deleteUser = trpc.deleteUser.useMutation();
 
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/trpc/appointments/${data.id}`);
-      toast({
-        title: "Appointment deleted.",
-      });
+      deleteUser.mutate(
+        {
+          timeId: data.id,
+        },
+        {
+          onSuccess(data, variables, context) {
+            toast({
+              title: "User deleted.",
+              description: "User Deleted successfully.",
+            });
+          },
+          onError(error, variables, context) {
+            toast({
+              title: "Something went wrong.",
+              description: error.message,
+            });
+          },
+        },
+      );
       router.refresh();
+
+      router.push(`/times`);
     } catch (error) {
       toast({
         title: "Something went wrong",
@@ -49,7 +68,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({
-      title: "Appointment ID copied to clipboard.",
+      title: "StartUser ID copied to clipboard.",
     });
   };
 
@@ -73,9 +92,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={() => onCopy(data.id)}>
             <Copy className="mr-2 h-4 w-4" /> Copy Id
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/appointments/${data.id}`)}
-          >
+          <DropdownMenuItem onClick={() => router.push(`/times/${data.id}`)}>
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
