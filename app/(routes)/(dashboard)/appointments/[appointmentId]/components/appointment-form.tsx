@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import * as z from "zod";
@@ -107,13 +108,27 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     : {
         busy: false,
         userId: "",
+        dayId: "",
         time: {
           timeId: "",
           startTime: "",
           endTime: "",
         },
-        dayId: "",
       };
+
+  let form;
+  console.log(initialData);
+
+  if (initialData) {
+    form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+      defaultValues,
+    });
+  } else {
+    form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+    });
+  }
 
   useEffect(() => {
     if (initialData) {
@@ -129,10 +144,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     }
   }, [initialData]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues,
-  });
   function onSubmit(data: z.infer<typeof formSchema>) {
     const timeEquals = times.find(
       (time) =>
@@ -164,6 +175,8 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 </pre>
               ),
             });
+            router.push(`/appointments`);
+            router.refresh();
           },
           onError(error, variables, context) {
             toast({
