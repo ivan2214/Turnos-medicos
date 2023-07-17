@@ -1,8 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Trash } from "lucide-react";
@@ -24,27 +23,26 @@ import AlertModal from "@/components/modals/alert-modal";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Appointment, Day, Time, User } from "@prisma/client";
+import { Time, Day, Appointment, User } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/utils/trpc";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
-  busy: z.boolean().default(false),
-  dayId: z.string().uuid().min(1),
   userId: z.string().uuid().min(1),
+  dayId: z.string().uuid().min(1),
+  busy: z.boolean().default(true).optional(),
   time: z.object({
     timeId: z.string().uuid().min(1).optional(),
     startTime: z.string().min(1),
     endTime: z.string().min(1),
   }),
 });
-
-type AppointmentFormValues = z.infer<typeof formSchema>;
 
 interface AppointmentFormProps {
   initialData: Appointment | null;
@@ -69,23 +67,18 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     {
       startTime: "",
       endTime: "",
-      appointmentId: "",
       createdAt: new Date(),
       dayId: "",
       id: "",
     },
   ]);
 
-  const createApointment = trpc.createApointment.useMutation();
+  const createAppointmentForm = trpc.createAppointmentInternal.useMutation();
 
-  const title = initialData ? "Edit appointment" : "Create appointment";
-  const description = initialData
-    ? "Edit a appointment."
-    : "Add a new appointment";
-  const toastMessage = initialData
-    ? "Appointment updated."
-    : "Appointment created.";
-  const action = initialData ? "Save changes" : "Create";
+  const title = initialData ? "Editar turno" : "Crear turno";
+  const description = initialData ? "Editar este turno." : "Añadir nuevo turno";
+  const toastMessage = initialData ? "Turno actualizado." : "Turno creado.";
+  const action = initialData ? "Guardar cambios" : "Crear nuevo turno";
 
   const defaultValues = initialData
     ? {
@@ -98,36 +91,45 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
         userId: "",
         time: {
           timeId: "",
+          startTime: "",
           endTime: "",
         },
         dayId: "",
       };
 
-  const form = useForm<AppointmentFormValues>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues,
   });
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    const timeEquals = times.find(
+      (time) =>
+        time.startTime === data.time.startTime &&
+        time.endTime === data.time.endTime,
+    );
 
-  const onSubmit = async (data: AppointmentFormValues) => {
-    try {
-      setLoading(true);
-
-      createApointment.mutate(
+    if (timeEquals) {
+      createAppointmentForm.mutate(
         {
           dayId: data.dayId,
           userId: data.userId,
           busy: data.busy,
           time: {
-            timeId: data?.time?.timeId,
-            startTime: data?.time?.startTime,
-            endTime: data?.time?.endTime,
+            timeId: timeEquals.id,
+            startTime: data.time.startTime,
+            endTime: data.time.endTime,
           },
         },
         {
           onSuccess(data, variables, context) {
             toast({
-              title: toastMessage,
-              description: "Appointment updated.",
+              title: "You submitted the following values:",
+              description: (
+                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                  <code className="text-white">
+                    {JSON.stringify(data, null, 2)}
+                  </code>
+                </pre>
+              ),
             });
           },
           onError(error, variables, context) {
@@ -138,29 +140,33 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           },
         },
       );
-      router.push(`/appointments`);
-      router.refresh();
-      toast({
-        title: toastMessage,
-      });
-    } catch (error: any) {
-      toast({
-        title: "Something went wrong.",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  }
 
-  const onDelete = async () => {
+  /*   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/trpc/appointments/${params.appointmentId}`);
+      deleteAppointment.mutate(
+        {
+          timeId: initialData?.id!,
+        },
+        {
+          onSuccess(data, variables, context) {
+            toast({
+              title: "Time deleted.",
+              description: "Time updated.",
+            });
+          },
+          onError(error, variables, context) {
+            toast({
+              title: "Something went wrong.",
+              description: error.message,
+            });
+          },
+        },
+      );
+      router.push(`/times`);
       router.refresh();
-      router.push(`/appointments`);
-      toast({
-        title: "Appointment deleted.",
-      });
     } catch (error: any) {
       toast({
         title: "Something went wrong.",
@@ -170,23 +176,13 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       setOpen(false);
     }
   };
-
-  const { dayId } = form.getValues();
-
-  useEffect(() => {
-    const timesFilter = times.filter((time) => time.dayId == dayId);
-    setFilterTime(timesFilter);
-  }, [dayId, times]);
-
-  console.log({ filterTime });
-  console.log({ dayId });
-
+ */
   return (
     <>
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
-        onConfirm={onDelete}
+        onConfirm={() => {}}
         loading={loading}
       />
       <div className="flex items-center justify-between">
@@ -206,7 +202,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full space-y-8"
+          className="w-2/3 space-y-6"
         >
           <div className="gap-8 md:grid md:grid-cols-3">
             <FormField
@@ -222,19 +218,18 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Seleccione un usuario"
-                        />
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Seleccione un usuario" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {users.map((user) => (
-                        <SelectItem key={user.id} value={user.id}>
-                          {user.name}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -269,7 +264,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {days.map((day) => (
+                      {days?.map((day) => (
                         <SelectItem key={day.id} value={day.id}>
                           {day.weekday}
                         </SelectItem>
@@ -303,7 +298,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                     </FormControl>
                     <SelectContent>
                       {filterTime?.map((time) => (
-                        <SelectItem key={time.id} value={time.id}>
+                        <SelectItem key={time.id} value={time.startTime}>
                           {time.startTime}
                         </SelectItem>
                       ))}
@@ -336,7 +331,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                     </FormControl>
                     <SelectContent>
                       {filterTime?.map((time) => (
-                        <SelectItem key={time.id} value={time.id}>
+                        <SelectItem key={time.id} value={time.endTime}>
                           {time.endTime}
                         </SelectItem>
                       ))}
@@ -360,9 +355,9 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Busy</FormLabel>
+                    <FormLabel>Ocupado</FormLabel>
                     <FormDescription>
-                      This appointment will appear on the home page
+                      Marcar este turno como ocupado
                     </FormDescription>
                   </div>
                 </FormItem>

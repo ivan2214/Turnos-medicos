@@ -43,13 +43,14 @@ type TimeProp = {
   endTime: string
 }
 
-export const createApointment = async (
+export const createAppointment = async (
   userId: string,
   dayId: string,
   busy: boolean,
   timeProp: TimeProp
 ) => {
-  if (!userId || !dayId || !busy || !timeProp || !timeProp.startTime || !timeProp.endTime) {
+  console.log("createAppointment", userId, dayId, busy, timeProp);
+  if (!userId || !dayId || !busy || !timeProp || !timeProp.startTime || !timeProp.endTime || !timeProp.timeId) {
     throw new Error("El formulario no es valido");
   }
 
@@ -77,6 +78,16 @@ export const createApointment = async (
     }
   })
 
+  const timeUpdate = await prisma.time.findFirst({
+    where: {
+      startTime: timeProp.startTime,
+      endTime: timeProp.endTime
+    }
+  })
+
+  console.log({ timeUpdate });
+
+
   if (!user) {
     throw new Error("El paciente no fue encontrado");
   }
@@ -89,7 +100,7 @@ export const createApointment = async (
     throw new Error("El tiempo no fue encontrado");
   }
 
-  if (!!appointment && !!time) {
+  if (appointment && time) {
     return await prisma.appointment.update({
       where: {
         id: appointment.id,
@@ -98,18 +109,7 @@ export const createApointment = async (
         busy: busy,
         userId: user.id,
         dayId: day.id,
-        Time: {
-
-          update: {
-            data: {
-              startTime: time.startTime,
-              endTime: time.endTime
-            },
-            where: {
-              id: time.id
-            }
-          }
-        }
+        timeId: time.id
       },
     });
   }
@@ -119,13 +119,7 @@ export const createApointment = async (
       dayId: day.id,
       busy: busy,
       userId: user.id,
-      Time: {
-        create: {
-          dayId: day.id,
-          startTime: timeProp.startTime,
-          endTime: timeProp.endTime
-        }
-      }
+      timeId: timeProp.timeId,
     },
   });
 

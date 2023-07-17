@@ -1,4 +1,4 @@
-import { createApointment, getApointment, getAppointments } from "@/utils/controllers/appointment";
+import { createAppointment, getApointment, getAppointments } from "@/utils/controllers/appointment";
 import { createDay, getDay, getDays } from "@/utils/controllers/day";
 import { createUser, getUser, getUsers } from "@/utils/controllers/user";
 import { createTime, deleteTime, getTime, getTimes } from "@/utils/controllers/time";
@@ -24,19 +24,19 @@ export const appRouter = t.router({
     if (!appointmentId) return null;
     return await getApointment(appointmentId)
   }),
-  createApointment: t.procedure.input(z.object({
+  createAppointmentInternal: t.procedure.input(z.object({
     userId: z.string().uuid().min(1),
     dayId: z.string().uuid().min(1),
-    busy: z.boolean().default(true),
+    busy: z.boolean().optional().default(true),
     time: z.object({
       timeId: z.string().uuid().min(1).optional(),
       startTime: z.string().min(1),
       endTime: z.string().min(1),
     })
   })).mutation(async ({
-    input: { userId, dayId, busy, time }
+    input: { userId, dayId, time, busy }
   }) => {
-    return await createApointment(
+    return await createAppointment(
       userId,
       dayId,
       busy,

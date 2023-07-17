@@ -13,6 +13,8 @@ export type AppointmentColumn = {
   name: string;
   email: string;
   day: string;
+  startTime: string;
+  endTime: string;
   createdAt: string;
 };
 

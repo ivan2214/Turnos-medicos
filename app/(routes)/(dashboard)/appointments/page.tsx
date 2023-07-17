@@ -12,6 +12,7 @@ const page = async () => {
     include: {
       day: true,
       user: true,
+      time: true,
     },
     orderBy: {
       day: {
@@ -27,6 +28,8 @@ const page = async () => {
       name: item.user?.name ? item.user.name || "" : "",
       email: item.user?.email ? item.user.email || "" : "",
       day: item.day ? item.day.weekday || "" : "",
+      startTime: item.time ? item.time.startTime || "" : "",
+      endTime: item.time ? item.time.endTime || "" : "",
       createdAt: format(item.createdAt, "MMMM do, yyyy"),
     }),
   );
