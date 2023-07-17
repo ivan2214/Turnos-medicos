@@ -15,7 +15,10 @@ const NeedAdminPage = async () => {
     <section className="flex h-screen items-center justify-center">
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <div className="flex h-full flex-col items-center justify-center gap-10">
-          <Heading title="Necesitas ser admin" />
+          <Heading
+            description="Necesitas ser admin para poder continuar"
+            title="Necesitas ser admin"
+          />
           <NeedAdmin currentUser={currentUser} />
         </div>
       </ThemeProvider>

@@ -1,4 +1,3 @@
-import getCurrentUser from "@/actions/getCurrentUser";
 import React from "react";
 
 const layoutNeedAdmin = ({ children }: { children: React.ReactNode }) => {
