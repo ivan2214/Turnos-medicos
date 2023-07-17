@@ -21,7 +21,7 @@ export const DayClient: React.FC<DaysClientProps> = ({ data }) => {
 
   return (
     <>
-      <div className="flex flex-col items-start gap-5 justify-between lg:flex-row">
+      <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
         <Heading
           title={`Horarios (${data?.length})`}
           description="Gestiona las citas de tu consultorio"

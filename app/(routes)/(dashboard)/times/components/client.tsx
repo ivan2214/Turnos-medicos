@@ -21,10 +21,10 @@ export const TimeClient: React.FC<TimesClientProps> = ({ data }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
         <Heading
           title={`Horarios (${data?.length})`}
-          description="Gestiona las citas de tu consultorio"
+          description="Gestiona los horarios de tu consultorio"
         />
         <Button onClick={() => router.push(`/times/new`)}>
           <Plus className="mr-2 h-4 w-4" /> Add New

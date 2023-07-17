@@ -11,7 +11,7 @@ export default async function DashboardLayout({
   if (!user?.admin) redirect("/needs-admin");
   return (
     <>
-      <div className="overflow-x-hidden  lg:py-3">{children}</div>
+      <div className="overflow-x-hidden lg:py-3">{children}</div>
     </>
   );
 }

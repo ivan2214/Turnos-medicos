@@ -67,8 +67,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
-      <div className="flex items-center py-4">
+    <div className="overflow-x-auto">
+      <div className="flex flex-col items-start gap-4 py-4 lg:flex-row lg:items-center">
         <Input
           placeholder="Buscar por comienzo de hora"
           value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="">
               Columns <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -108,7 +108,10 @@ export function DataTable<TData, TValue>({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                className="table-row-group lg:table-row"
+                key={headerGroup.id}
+              >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
@@ -128,6 +131,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
+                  className="table-row-group lg:table-row"
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >

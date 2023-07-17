@@ -35,8 +35,8 @@ const page = async () => {
   );
 
   return (
-    <div className="flex-col">
-      <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="flex-col overflow-x-hidden">
+      <div className="flex-1 overflow-x-hidden space-y-4 pt-6 lg:p-8">
         <AppointmentsClient data={formattedAppointments} />
       </div>
     </div>
