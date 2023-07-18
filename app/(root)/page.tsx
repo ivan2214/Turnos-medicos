@@ -15,7 +15,7 @@ import getCurrentUser from "@/actions/getCurrentUser";
 import { redirect } from "next/navigation";
 
 import prisma from "@/app/libs/prismadb";
-import { Appointment, Patient } from "@prisma/client";
+import { Appointment, Day, Patient } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -31,9 +31,10 @@ export default async function DashboardPage() {
     },
   });
 
-  const patients: Patient[] = await prisma.patient.findMany({
+  const days: Day[] = await prisma.day.findMany({
     include: {
       _count: true,
+      appointments: true,
     },
   });
 
@@ -176,17 +177,17 @@ export default async function DashboardPage() {
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-7 lg:gap-4">
                 <Card className="w-full lg:col-span-4">
                   <CardHeader>
-                    <CardTitle>Overview</CardTitle>
+                    <CardTitle>Turnos en la semana</CardTitle>
                   </CardHeader>
                   <CardContent className="w-full">
-                    <Overview appointments={appointments} patients={patients} />
+                    <Overview days={days} appointments={appointments} />
                   </CardContent>
                 </Card>
                 <Card className="w-full lg:col-span-3">
                   <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
+                    <CardTitle>Turnos recientes</CardTitle>
                     <CardDescription>
-                      You made 265 sales this month.
+                      Tuvo 20 en turnos esta semana
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="w-full">
