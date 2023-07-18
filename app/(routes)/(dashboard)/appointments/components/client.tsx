@@ -33,7 +33,12 @@ export const AppointmentsClient: React.FC<AppointmentsClientProps> = ({
       </div>
       <Separator />
       <div className="hidden h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
-        <DataTable searchKey="name" columns={columns} data={data} />
+        <DataTable
+          query="Nombre del paciente"
+          searchKey="name"
+          columns={columns}
+          data={data}
+        />
       </div>
       <Heading title="API" description="API Calls for Turnos" />
       {process.env.NODE_ENV === "development" && (
