@@ -1,69 +1,36 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Appointment, Patient } from "@prisma/client";
 
-export function RecentSales() {
+interface Props {
+  appointments: Appointment[];
+  patients: Patient[];
+}
+
+export function RecentSales({ appointments, patients }: Props) {
   return (
     <div className="w-full space-y-8">
-      <section className="flex w-full flex-col items-start gap-1">
-        <div className="flex items-start justify-center gap-2">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src="/avatars/01.png" alt="Avatar" />
-            <AvatarFallback>OM</AvatarFallback>
-          </Avatar>
-          <p className="text-sm font-medium leading-none">Olivia Martin</p>
-        </div>
-        <div className="ml-10 flex flex-col items-start gap-3">
-          <p className="text-sm text-muted-foreground">
-            olivia.martin@email.com
-          </p>
-          <div className="font-medium">+$1,999.00</div>
-        </div>
-      </section>
-      <div className="flex w-full items-center">
-        <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
-          <AvatarImage src="/avatars/02.png" alt="Avatar" />
-          <AvatarFallback>JL</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Jackson Lee</p>
-          <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$39.00</div>
-      </div>
-      <div className="flex w-full items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/03.png" alt="Avatar" />
-          <AvatarFallback>IN</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
-          <p className="text-sm text-muted-foreground">
-            isabella.nguyen@email.com
-          </p>
-        </div>
-        <div className="ml-auto font-medium">+$299.00</div>
-      </div>
-      <div className="flex w-full items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/04.png" alt="Avatar" />
-          <AvatarFallback>WK</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">William Kim</p>
-          <p className="text-sm text-muted-foreground">will@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$99.00</div>
-      </div>
-      <div className="flex w-full items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/05.png" alt="Avatar" />
-          <AvatarFallback>SD</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Sofia Davis</p>
-          <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$39.00</div>
-      </div>
+      {patients.map((patient) => {
+        return (
+          <section
+            key={patient.id}
+            className="flex w-full flex-col items-start gap-1 lg:flex-row lg:items-center lg:justify-start"
+          >
+            <div className="flex items-start justify-center gap-2 lg:items-center">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                <AvatarFallback>OM</AvatarFallback>
+              </Avatar>
+              <p className="text-sm font-medium leading-none">{patient.name}</p>
+            </div>
+            <div className="ml-10 flex flex-col items-start  lg:m-0 lg:items-center">
+              <p className="text-sm text-muted-foreground">{patient.email}</p>
+            </div>
+            <div className="ml-10 flex flex-col items-start  lg:m-0 lg:items-center">
+              <p className="font-medium">{patient.healthInsuranceId}</p>
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }

@@ -15,7 +15,7 @@ import getCurrentUser from "@/actions/getCurrentUser";
 import { redirect } from "next/navigation";
 
 import prisma from "@/app/libs/prismadb";
-import { Appointment, Patient } from "@prisma/client";
+import { Appointment, Day, Patient } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -31,9 +31,18 @@ export default async function DashboardPage() {
     },
   });
 
+  const days: Day[] = await prisma.day.findMany({
+    include: {
+      _count: true,
+      appointments: true,
+    },
+  });
+
   const patients: Patient[] = await prisma.patient.findMany({
     include: {
       _count: true,
+      appointments: true,
+      healthInsurance: true,
     },
   });
 
@@ -74,7 +83,7 @@ export default async function DashboardPage() {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Total Revenue
+                      Total recaudado
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -90,16 +99,16 @@ export default async function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$45,231.89</div>
+                    <div className="text-2xl font-bold">${patients.length}</div>
                     <p className="text-xs text-muted-foreground">
-                      +20.1% from last month
+                      +20.1% desde el ultimo mes
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Subscriptions
+                      Nuevos pacientes
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -117,15 +126,17 @@ export default async function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+2350</div>
+                    <div className="text-2xl font-bold">+{patients.length}</div>
                     <p className="text-xs text-muted-foreground">
-                      +180.1% from last month
+                      +180.1% desde el ultimo mes
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
+                    <CardTitle className="text-sm font-medium">
+                      Turnos
+                    </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -141,16 +152,18 @@ export default async function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+12,234</div>
+                    <div className="text-2xl font-bold">
+                      {appointments.length}
+                    </div>
                     <p className="text-xs text-muted-foreground">
-                      +19% from last month
+                      +19% desde el ultimo mes
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Active Now
+                      Turnos activos
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -166,9 +179,9 @@ export default async function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+573</div>
+                    <div className="text-2xl font-bold">{days.length}</div>
                     <p className="text-xs text-muted-foreground">
-                      +201 since last hour
+                      +201 desde la ultima hoa
                     </p>
                   </CardContent>
                 </Card>
@@ -176,21 +189,24 @@ export default async function DashboardPage() {
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-7 lg:gap-4">
                 <Card className="w-full lg:col-span-4">
                   <CardHeader>
-                    <CardTitle>Overview</CardTitle>
+                    <CardTitle>Turnos en la semana</CardTitle>
                   </CardHeader>
                   <CardContent className="w-full">
-                    <Overview appointments={appointments} patients={patients} />
+                    <Overview days={days} appointments={appointments} />
                   </CardContent>
                 </Card>
                 <Card className="w-full lg:col-span-3">
                   <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
+                    <CardTitle>Turnos recientes</CardTitle>
                     <CardDescription>
-                      You made 265 sales this month.
+                      Tuvo 20 en turnos esta semana
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="w-full">
-                    <RecentSales />
+                    <RecentSales
+                      patients={patients}
+                      appointments={appointments}
+                    />
                   </CardContent>
                 </Card>
               </div>

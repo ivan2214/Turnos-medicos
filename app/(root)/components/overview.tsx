@@ -1,60 +1,67 @@
 "use client";
 
-import { Appointment, Patient } from "@prisma/client";
+import { Appointment, Day } from "@prisma/client";
 import {
-  Bar,
   BarChart,
+  Bar,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
+  CartesianGrid,
 } from "recharts";
 
 interface Props {
-  patients: Patient[];
+  days: Day[];
   appointments: Appointment[];
 }
 
-export function Overview({ patients, appointments }: Props) {
-  // Generar los datos para el gráfico a partir de los usuarios y citas
-  const data = patients.map((patient, index) => {
-    const totalAppointments = appointments.filter(
-      (appointment) => appointment.patientId === patient.id,
-    ).length;
+export function Overview({ appointments, days }: Props) {
+  const dayCounts: { [dayId: string]: number } = {};
+
+  days.forEach((day) => {
+    dayCounts[day.id] = 0;
+  });
+
+  appointments.forEach((appointment) => {
+    const dayId = appointment.dayId;
+    if (dayId) {
+      dayCounts[dayId] += 1;
+    }
+  });
+
+  const data = days.map((day, index) => {
+    const count = dayCounts[day.id];
 
     return {
-      name: patient.name,
-      total: totalAppointments,
-      index: index + 1,
+      name: day.weekday,
+      total: count,
+      fill: generateColor(index), // Generar un color único para cada barra
     };
   });
+
+  const yValues = data.map((item) => Number(item.total));
+  const yDomain = [0, Math.max(...yValues)];
 
   return (
     <ResponsiveContainer width="100%" height={350}>
       <BarChart data={data}>
-        <XAxis
-          dataKey="name"
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
+        <XAxis dataKey="name" stroke="#8884d8" />
         <YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(value: any) => value}
+          tickFormatter={(value: any) => String(Math.round(value))}
+          domain={yDomain}
         />
-        <Bar dataKey="total" fill="#adfa1d" radius={[4, 4, 0, 0]} />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: "#000",
-            border: "none",
-            borderRadius: "4px",
-          }}
-        />
+        <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
+        <Tooltip wrapperStyle={{ width: 100, backgroundColor: "#ccc" }} />
+        <Bar dataKey="total" barSize={30} fill="#8884d8" />
       </BarChart>
     </ResponsiveContainer>
   );
+}
+
+function generateColor(index: number): string {
+  // Generar colores aleatorios basados en el índice
+  const colors = ["#adfa1d", "#ff5500", "#00aaff", "#ff00aa", "#55ff00"];
+  return colors[index % colors.length];
 }
