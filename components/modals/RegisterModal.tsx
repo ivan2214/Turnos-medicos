@@ -43,7 +43,7 @@ const RegisterModal = () => {
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const createUserMutation = trpc.createUser.useMutation();
+  const createUserMutation = trpc.createUserInternal.useMutation();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
