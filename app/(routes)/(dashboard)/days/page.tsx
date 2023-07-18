@@ -21,7 +21,6 @@ const page = async () => {
   const formattedDays: DayColumn[] = days?.map((item) => ({
     id: item.id,
     day: item.weekday,
-    weekday: item.weekday,
     createdAt: format(item.createdAt, "MMMM do, yyyy"),
   }));
 

@@ -85,78 +85,70 @@ export const TimeForm: React.FC<TimeFormProps> = ({ initialData, days }) => {
   });
 
   const onSubmit = async (data: TimeFormValues) => {
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      createTime.mutate(
-        {
-          time: data.time,
-          dayId: data.dayId,
-          timeId: initialData?.id,
+    createTime.mutate(
+      {
+        time: data.time,
+        dayId: data.dayId,
+        timeId: initialData?.id,
+      },
+      {
+        onSuccess(data, variables, context) {
+          toast({
+            title: toastMessage,
+            description: "Time updated.",
+          });
+          router.push(`/times`);
+          setTimeout(() => {
+            router.refresh();
+          }, 600);
         },
-        {
-          onSuccess(data, variables, context) {
-            toast({
-              title: toastMessage,
-              description: "Time updated.",
-            });
-          },
-          onError(error, variables, context) {
-            toast({
-              title: "Something went wrong.",
-              description: error.message,
-            });
-          },
+        onError(error, variables, context) {
+          toast({
+            title: "Something went wrong.",
+            description: error.message,
+          });
+          router.push(`/times`);
+          setTimeout(() => {
+            router.refresh();
+          }, 600);
         },
-      );
-      router.push(`/times`);
-      setTimeout(() => {
-        router.refresh();
-      }, 600);
+      },
+    );
 
-    } catch (error: any) {
-      toast({
-        title: "Something went wrong.",
-      });
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false);
   };
 
   const onDelete = async () => {
-    try {
-      setLoading(true);
-      deleteTime.mutate(
-        {
-          timeId: initialData?.id!,
+    setLoading(true);
+    deleteTime.mutate(
+      {
+        timeId: initialData?.id!,
+      },
+      {
+        onSuccess(data, variables, context) {
+          toast({
+            title: "Tiempo eliminado.",
+            description: "aguarde mientras se lo redirige.",
+            duration: 3000,
+          });
+          router.push(`/appointments`);
+          setTimeout(() => {
+            router.refresh();
+          }, 600);
         },
-        {
-          onSuccess(data, variables, context) {
-            toast({
-              title: "Time deleted.",
-              description: "Time updated.",
-            });
-          },
-          onError(error, variables, context) {
-            toast({
-              title: "Something went wrong.",
-              description: error.message,
-            });
-          },
+        onError(error, variables, context) {
+          toast({
+            title: "Something went wrong.",
+            description: error.message,
+          });
         },
-      );
-      router.push(`/times`);
-      setTimeout(() => {
-        router.refresh();
-      }, 600);
-    } catch (error: any) {
-      toast({
-        title: "Something went wrong.",
-      });
-    } finally {
-      setLoading(false);
-      setOpen(false);
-    }
+      },
+    );
+
+    setLoading(false);
+    setOpen(false);
   };
 
   return (

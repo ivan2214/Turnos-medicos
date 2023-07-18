@@ -80,41 +80,39 @@ export const PatientForm: React.FC<PatientFormProps> = ({
   });
 
   const onSubmit = async (data: PatientFormValues) => {
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      createPatient.mutate(
-        {
-          email: data.email,
-          name: data.name,
-          healthInsuranceId: data.healthInsuranceId,
+    createPatient.mutate(
+      {
+        email: data.email,
+        name: data.name,
+        healthInsuranceId: data.healthInsuranceId,
+      },
+      {
+        onSuccess(data, variables, context) {
+          toast({
+            title: toastMessage,
+            description: "Patient updated.",
+          });
+          router.push(`/patients`);
+          setTimeout(() => {
+            router.refresh();
+          }, 600);
         },
-        {
-          onSuccess(data, variables, context) {
-            toast({
-              title: toastMessage,
-              description: "Patient updated.",
-            });
-          },
-          onError(error, variables, context) {
-            toast({
-              title: "Something went wrong.",
-              description: error.message,
-            });
-          },
+        onError(error, variables, context) {
+          toast({
+            title: "Something went wrong.",
+            description: error.message,
+          });
+          router.push(`/patients`);
+          setTimeout(() => {
+            router.refresh();
+          }, 600);
         },
-      );
-      router.push(`/patients`);
-      setTimeout(() => {
-        router.refresh();
-      }, 600);
-    } catch (error: any) {
-      toast({
-        title: "Something went wrong.",
-      });
-    } finally {
-      setLoading(false);
-    }
+      },
+    );
+
+    setLoading(false);
   };
 
   const onDelete = async () => {

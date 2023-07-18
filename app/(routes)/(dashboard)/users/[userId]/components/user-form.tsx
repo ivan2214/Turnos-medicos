@@ -79,60 +79,60 @@ export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
   });
 
   const onSubmit = async (data: UserFormValues) => {
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      if (initialData && initialData.id && initialData.hashedPassword) {
-        updateUser.mutate(
-          {
-            email: data.email,
-            name: data.name,
-            admin: data.admin ?? false,
-            userId: initialData.id,
-            password: data.password || undefined,
+    if (initialData && initialData.id && initialData.hashedPassword) {
+      updateUser.mutate(
+        {
+          email: data.email,
+          name: data.name,
+          admin: data.admin ?? false,
+          userId: initialData.id,
+          password: data.password || undefined,
+        },
+        {
+          onError(error, variables, context) {
+            toast({
+              title: "Something went wrong.",
+              description: error.message,
+            });
           },
-          {
-            onError(error, variables, context) {
-              toast({
-                title: "Something went wrong.",
-                description: error.message,
-              });
-            },
+        },
+      );
+    } else {
+      createUser.mutate(
+        {
+          email: data.email,
+          name: data.name,
+          admin: data.admin ?? false,
+          password: data.password!,
+        },
+        {
+          onSuccess(data, variables, context) {
+            toast({
+              title: toastMessage,
+              description: "Usuario creado.",
+            });
+            router.push(`/users`);
+            setTimeout(() => {
+              router.refresh();
+            }, 1000);
           },
-        );
-      } else {
-        createUser.mutate(
-          {
-            email: data.email,
-            name: data.name,
-            admin: data.admin ?? false,
-            password: data.password!,
+          onError(error, variables, context) {
+            toast({
+              title: "Something went wrong.",
+              description: error.message,
+            });
+            router.push(`/times`);
+            setTimeout(() => {
+              router.refresh();
+            }, 600);
           },
-          {
-            onError(error, variables, context) {
-              toast({
-                title: "Something went wrong.",
-                description: error.message,
-              });
-            },
-          },
-        );
-      }
-      router.push(`/users`);
-      setTimeout(() => {
-        router.refresh();
-      }, 1000);
-    } catch (error: any) {
-      toast({
-        title: "Something went wrong.",
-      });
-    } finally {
-      toast({
-        title: toastMessage,
-        description: "User updated.",
-      });
-      setLoading(false);
+        },
+      );
     }
+
+    setLoading(false);
   };
 
   const onDelete = async () => {

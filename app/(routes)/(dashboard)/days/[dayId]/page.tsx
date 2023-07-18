@@ -10,8 +10,8 @@ const DayPage = async ({ params }: { params: { dayId: string } }) => {
   });
 
   return (
-    <div className="flex-col">
-      <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="w-full flex-col">
+      <div className="w-full flex-1 space-y-4  py-6 lg:p-8 lg:py-0 lg:pt-6">
         <DayForm initialData={day} />
       </div>
     </div>
