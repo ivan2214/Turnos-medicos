@@ -1,6 +1,6 @@
 import { createAppointment, deleteAppointment, getApointment, getAppointments } from "@/utils/controllers/appointment";
 import { createDay, deleteDay, getDay, getDays } from "@/utils/controllers/day";
-import { createUser, deleteUser, getUser, getUsers } from "@/utils/controllers/user";
+import { createUser, deleteUser, getUser, getUsers, updateUser } from "@/utils/controllers/user";
 import { createTime, deleteTime, getTime, getTimes } from "@/utils/controllers/time";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
@@ -143,17 +143,38 @@ export const appRouter = t.router({
       userId
     )
   }),
-  createUser: t.procedure.input(z.object({
+  createUserInternal: t.procedure.input(z.object({
     email: z.string().min(3),
     name: z.string().min(3),
+    admin: z.boolean().default(false).optional(),
     password: z.string().min(3),
   })).mutation(async ({
-    input: { email, name, password }
+    input: { email, name, admin, password }
   }) => {
     return await createUser(
       {
         email,
         name,
+        admin,
+        password,
+      }
+    )
+  }),
+  updateUserInternal: t.procedure.input(z.object({
+    email: z.string().min(3),
+    name: z.string().min(3),
+    admin: z.boolean().default(false).optional(),
+    userId: z.string().uuid().min(1),
+    password: z.string().min(3).optional(),
+  })).mutation(async ({
+    input: { email, name, admin, userId, password }
+  }) => {
+    return await updateUser(
+      {
+        email,
+        name,
+        admin,
+        userId,
         password
       }
     )
