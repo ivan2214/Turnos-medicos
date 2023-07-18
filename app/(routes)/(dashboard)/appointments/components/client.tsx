@@ -21,8 +21,8 @@ export const AppointmentsClient: React.FC<AppointmentsClientProps> = ({
   const router = useRouter();
 
   return (
-    <>
-      <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
+    <section className="flex flex-col items-center gap-5">
+      <div className="flex w-full flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
         <Heading
           title={`Turnos (${data.length})`}
           description="Gestiona las citas de tu consultorio"
@@ -32,21 +32,12 @@ export const AppointmentsClient: React.FC<AppointmentsClientProps> = ({
         </Button>
       </div>
       <Separator />
-      <div className="hidden h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
-        <DataTable
-          query="Nombre del paciente"
-          searchKey="name"
-          columns={columns}
-          data={data}
-        />
-      </div>
-      <Heading title="API" description="API Calls for Turnos" />
-      {process.env.NODE_ENV === "development" && (
-        <>
-          <Separator />
-          <ApiList entityName="appointments" entityIdName="appointmentId" />
-        </>
-      )}
-    </>
+      <DataTable
+        query="Nombre del paciente"
+        searchKey="name"
+        columns={columns}
+        data={data}
+      />
+    </section>
   );
 };

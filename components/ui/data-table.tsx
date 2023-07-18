@@ -69,8 +69,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="overflow-x-auto">
-      <div className="flex flex-col items-start gap-4 py-4 lg:flex-row lg:items-center">
+    <div className="">
+      <div className="flex items-center py-4">
         <Input
           placeholder={`Buscar por ${query} `}
           value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
@@ -107,13 +107,10 @@ export function DataTable<TData, TValue>({
         </DropdownMenu>
       </div>
       <div className="rounded-md border">
-        <Table>
+        <Table className=" max-w-full lg:w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                className="table-row-group lg:table-row"
-                key={headerGroup.id}
-              >
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
@@ -133,7 +130,6 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className="table-row-group lg:table-row"
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
