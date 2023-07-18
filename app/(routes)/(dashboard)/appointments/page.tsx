@@ -30,13 +30,12 @@ const page = async () => {
       day: item.day ? item.day.weekday || "" : "",
       startTime: item.time ? item.time.startTime || "" : "",
       endTime: item.time ? item.time.endTime || "" : "",
-      createdAt: format(item.createdAt, "MMMM do, yyyy"),
     }),
   );
 
   return (
-    <div className="flex-col overflow-x-hidden">
-      <div className="flex-1 overflow-x-hidden space-y-4 pt-6 lg:p-8">
+    <div className="flex-col">
+      <div className="flex-1 space-y-4 p-8 pt-6">
         <AppointmentsClient data={formattedAppointments} />
       </div>
     </div>

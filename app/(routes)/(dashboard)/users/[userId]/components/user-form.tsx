@@ -22,7 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import Heading from "@/components/ui/heading";
 import AlertModal from "@/components/modals/alert-modal";
 
-import { HealthInsurance, Patient } from "@prisma/client";
+import { HealthInsurance, User } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/utils/trpc";
 import {
@@ -32,85 +32,105 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
-const formSchema = z.object({
-  name: z.string().min(3),
-  email: z.string().email().min(3),
-  healthInsuranceId: z.string().uuid().optional(),
-});
-
-type PatientFormValues = z.infer<typeof formSchema>;
-
-interface PatientFormProps {
-  initialData: Patient | null;
-  healthInsurances: HealthInsurance[] | null | undefined;
+interface UserFormProps {
+  initialData: User | null | undefined;
 }
 
-export const PatientForm: React.FC<PatientFormProps> = ({
-  initialData,
-  healthInsurances,
-}) => {
+export const UserForm: React.FC<UserFormProps> = ({ initialData }) => {
+  const formSchema = z.object({
+    name: z.string().min(3),
+    email: z.string().email().min(3),
+    password: initialData?.hashedPassword
+      ? z.string().min(6).optional()
+      : z.string().min(6),
+    admin: z.boolean().default(false).optional(),
+  });
+
+  type UserFormValues = z.infer<typeof formSchema>;
   const router = useRouter();
   const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const createPatient = trpc.createPatientInternal.useMutation();
-  const deletePatientForm = trpc.deletePatientInternal.useMutation();
+  const createUser = trpc.createUserInternal.useMutation();
+  const updateUser = trpc.updateUserInternal.useMutation();
+  const deleteUserForm = trpc.deleteUserInternal.useMutation();
 
-  const title = initialData ? "Editar patient" : "Crear patient";
+  const title = initialData ? "Editar Usuario" : "Crear Usuario";
   const description = initialData
-    ? "Editar a patient."
-    : "Añadir un nuevo paciente";
-  const toastMessage = initialData
-    ? "Paciente Actualizado."
-    : "Paciente creado.";
+    ? "Editar a Usuario."
+    : "Añadir un nuevo usuario";
+  const toastMessage = initialData ? "Usuario Actualizado." : "Usuario creado.";
   const action = initialData ? "Guardar cambios" : "Crear";
 
   const defaultValues = initialData
     ? {
         ...initialData,
+        password: initialData.hashedPassword,
       }
     : {};
 
-  const form = useForm<PatientFormValues>({
+  const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
-  const onSubmit = async (data: PatientFormValues) => {
+  const onSubmit = async (data: UserFormValues) => {
     setLoading(true);
 
-    createPatient.mutate(
-      {
-        email: data.email,
-        name: data.name,
-        healthInsuranceId: data.healthInsuranceId,
-      },
-      {
-        onSuccess(data, variables, context) {
-          toast({
-            title: toastMessage,
-            description: "Patient updated.",
-          });
-          router.push(`/patients`);
-          setTimeout(() => {
-            router.refresh();
-          }, 600);
+    if (initialData && initialData.id && initialData.hashedPassword) {
+      updateUser.mutate(
+        {
+          email: data.email,
+          name: data.name,
+          admin: data.admin ?? false,
+          userId: initialData.id,
+          password: data.password || undefined,
         },
-        onError(error, variables, context) {
-          toast({
-            title: "Something went wrong.",
-            description: error.message,
-          });
-          router.push(`/patients`);
-          setTimeout(() => {
-            router.refresh();
-          }, 600);
+        {
+          onError(error, variables, context) {
+            toast({
+              title: "Something went wrong.",
+              description: error.message,
+            });
+          },
         },
-      },
-    );
+      );
+    } else {
+      createUser.mutate(
+        {
+          email: data.email,
+          name: data.name,
+          admin: data.admin ?? false,
+          password: data.password!,
+        },
+        {
+          onSuccess(data, variables, context) {
+            toast({
+              title: toastMessage,
+              description: "Usuario creado.",
+            });
+            router.push(`/users`);
+            setTimeout(() => {
+              router.refresh();
+            }, 1000);
+          },
+          onError(error, variables, context) {
+            toast({
+              title: "Something went wrong.",
+              description: error.message,
+            });
+            router.push(`/times`);
+            setTimeout(() => {
+              router.refresh();
+            }, 600);
+          },
+        },
+      );
+    }
 
     setLoading(false);
   };
@@ -118,15 +138,15 @@ export const PatientForm: React.FC<PatientFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      deletePatientForm.mutate(
+      deleteUserForm.mutate(
         {
-          patientId: initialData?.id!,
+          userId: initialData?.id!,
         },
         {
           onSuccess(data, variables, context) {
             toast({
-              title: "Patient deleted.",
-              description: "Patient updated.",
+              title: "User deleted.",
+              description: "User updated.",
             });
           },
           onError(error, variables, context) {
@@ -137,7 +157,7 @@ export const PatientForm: React.FC<PatientFormProps> = ({
           },
         },
       );
-      router.push(`/patients`);
+      router.push(`/users`);
       setTimeout(() => {
         router.refresh();
       }, 600);
@@ -219,36 +239,43 @@ export const PatientForm: React.FC<PatientFormProps> = ({
 
             <FormField
               control={form.control}
-              name="healthInsuranceId"
+              name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Obra social</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Seleccione una obra socialll"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {healthInsurances?.map((healthInsurance) => (
-                        <SelectItem
-                          key={healthInsurance?.id}
-                          value={healthInsurance?.id}
-                        >
-                          {healthInsurance?.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Contraseña</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="JhonDoe45*"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Porfavor introduzca una contraseña
+                  </FormDescription>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="admin"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      // @ts-ignore
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Administrador</FormLabel>
+                    <FormDescription>
+                      Marcar este usuario como administrador
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />

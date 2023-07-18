@@ -1,6 +1,7 @@
 import prismadb from "@/app/libs/prismadb";
 
 import { AppointmentForm } from "./components/appointment-form";
+import { Appointment } from "@prisma/client";
 
 const AppointmentPage = async ({
   params,
@@ -24,11 +25,9 @@ const AppointmentPage = async ({
     },
   });
 
-  const times = await prismadb.time.findMany({
-    orderBy: {
-      startTime: "asc",
-    },
-  });
+  const appointments = await prismadb.appointment.findMany();
+
+  const times = await getAvailableTimes(appointments);
 
   const patients = await prismadb.patient.findMany({
     orderBy: {
@@ -36,10 +35,9 @@ const AppointmentPage = async ({
     },
   });
 
-  
   return (
-    <div className="flex-col">
-      <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="w-full flex-col">
+      <div className="w-full flex-1 space-y-4  py-6 lg:p-8 lg:py-0 lg:pt-6">
         <AppointmentForm
           times={times}
           days={days}
@@ -52,3 +50,21 @@ const AppointmentPage = async ({
 };
 
 export default AppointmentPage;
+
+const getAvailableTimes = async (appointments: Appointment[]) => {
+  const occupiedTimeIds = appointments
+    .map((appointment) => appointment.timeId)
+    .filter((timeId) => timeId !== null) as string[];
+
+  return await prismadb.time.findMany({
+    orderBy: {
+      startTime: "asc",
+    },
+    where: {
+      id: { notIn: occupiedTimeIds },
+    },
+    include: {
+      Appointment: true,
+    },
+  });
+};

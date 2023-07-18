@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef, SortingColumn, SortingFn } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 
 import { CellAction } from "./cell-action";
 import { Button } from "@/components/ui/button";
@@ -8,63 +8,33 @@ import { ArrowUpDownIcon } from "lucide-react";
 
 export type DayColumn = {
   id: string;
-  weekday: string;
+  day: string;
   createdAt: string;
-};
-
-const days = [
-  "lunes",
-  "martes",
-  "miércoles",
-  "jueves",
-  "viernes",
-  "sábado",
-  "domingo",
-];
-
-const sortByWeekday: SortingFn<DayColumn> = (rowA, rowB, columnId) => {
-  const dayA = days.indexOf(rowA.original.weekday.toLowerCase());
-  const dayB = days.indexOf(rowB.original.weekday.toLowerCase());
-
-  if (dayA < dayB) {
-    return -1;
-  } else if (dayA > dayB) {
-    return 1;
-  } else {
-    return 0;
-  }
 };
 
 export const columns: ColumnDef<DayColumn>[] = [
   {
     accessorKey: "day",
     header: ({ column }) => {
-      const sortingColumn = column as SortingColumn<DayColumn>;
-      const isSorted = sortingColumn.getIsSorted();
-      const sortDirection = isSorted
-        ? isSorted === "asc"
-          ? "desc"
-          : "asc"
-        : undefined;
-
       return (
-        <Button
-          variant="ghost"
-          onClick={() => sortingColumn.toggleSorting(undefined, false)}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting()}>
           Dia
-          {isSorted && (
-            <ArrowUpDownIcon
-              className={`ml-2 h-4 w-4 ${
-                sortDirection === "desc" ? "rotate-180 transform" : ""
-              }`}
-            />
-          )}
+          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    sortingFn: sortByWeekday,
     cell: ({ row }) => <div className="lowercase">{row.getValue("day")}</div>,
+    sortingFn: (a, b) => {
+      const { original: originalA } = a;
+      const { day: DayAValue } = originalA;
+      const { original: originalB } = b;
+      const { day: DayBValue } = originalB;
+
+      const indexA = daysOfWeek.indexOf(DayAValue);
+      const indexB = daysOfWeek.indexOf(DayBValue);
+
+      return indexA - indexB;
+    },
   },
   {
     accessorKey: "createdAt",
@@ -74,4 +44,14 @@ export const columns: ColumnDef<DayColumn>[] = [
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,
   },
+];
+
+const daysOfWeek = [
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+  "Domingo",
 ];

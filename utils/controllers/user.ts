@@ -1,12 +1,7 @@
-import bcrypt from "bcrypt";
-
+import bcrypt from "bcrypt"
 import prisma from "@/app/libs/prismadb";
+import { User } from "@prisma/client";
 
-type TypeCreateUser = {
-  email: string
-  name: string,
-  password: string
-}
 
 export const getUsers = async () => {
   return prisma.user.findMany({
@@ -39,12 +34,18 @@ export const deleteUser = async (userId: string) => {
 };
 
 
-
+type TypeCreateUser = {
+  email: string
+  name: string,
+  admin?: boolean
+  password: string
+}
 
 export const createUser = async ({
   email,
   name,
-  password
+  admin,
+  password,
 }: TypeCreateUser) => {
   const userAlreadyExistins = await prisma.user.findUnique({
     where: {
@@ -53,7 +54,7 @@ export const createUser = async ({
   });
 
   if (userAlreadyExistins) {
-    throw new Error("El usuario ya existe");
+    throw new Error(`User ${name} already exists.`)
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
@@ -63,9 +64,61 @@ export const createUser = async ({
       email,
       name,
       hashedPassword,
-      admin: email === "bongiovanniivan12@gmail.com" ? true : false
+      admin: admin ?? false
     }
   });
 
   return user
+};
+
+
+type TypeUpdateUser = {
+  email: string
+  name: string
+  admin?: boolean
+  userId: string
+  password?: string | undefined
+}
+
+export const updateUser = async ({
+  email,
+  name,
+  admin,
+  userId,
+  password
+}: TypeUpdateUser) => {
+
+  let user: User
+
+  if (password && password !== "" && password !== undefined) {
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    user = await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        email,
+        name,
+        hashedPassword,
+        admin: admin ?? false
+      }
+    });
+    return user
+  }
+  else {
+    user = await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        email,
+        name,
+        admin: admin ?? false
+      }
+    });
+    return user
+  }
+
 };

@@ -31,7 +31,7 @@ export const DayClient: React.FC<DaysClientProps> = ({ data }) => {
         </Button>
       </div>
       <Separator />
-      <div className="hidden h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
+      <div className=" h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
         <DataTable
           query="Dia de la semana"
           searchKey="day"

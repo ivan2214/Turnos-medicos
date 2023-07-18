@@ -30,8 +30,13 @@ export const PatientClient: React.FC<PatientsClientProps> = ({ data }) => {
         </Button>
       </div>
       <Separator />
-      <div className="hidden h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
-        <DataTable query="Nombre del paciente" searchKey="name" columns={columns} data={data} />
+      <div className=" h-full flex-1 flex-col overflow-x-hidden p-8 md:flex">
+        <DataTable
+          query="Nombre del paciente"
+          searchKey="name"
+          columns={columns}
+          data={data}
+        />
       </div>
       {process.env.NODE_ENV === "development" && (
         <>

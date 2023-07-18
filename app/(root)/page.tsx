@@ -56,16 +56,19 @@ export default async function DashboardPage() {
     <>
       <div className="flex-col overflow-x-hidden md:flex">
         <div className="flex-1 lg:px-8">
-          <div className="flex flex-col items-center justify-between space-y-2 lg:flex-row">
+          <div className="flex flex-col items-start justify-between gap-4 py-5 lg:flex-row">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <div className="flex flex-col items-center space-x-2 lg:flex-row">
+            <div className="flex flex-col items-start justify-between gap-5 lg:flex-row lg:space-x-2">
               <CalendarDateRangePicker />
               <Button>Download</Button>
             </div>
           </div>
-          <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Tabs
+            defaultValue="overview"
+            className="flex flex-col items-center gap-6"
+          >
+            <TabsList className="hidden md:block">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-4">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="analytics" disabled>
                   Analytics

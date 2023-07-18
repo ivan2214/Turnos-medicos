@@ -70,7 +70,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
   patients,
   times,
 }) => {
-  const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -117,7 +116,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       };
 
   let form;
-  console.log(initialData);
 
   if (initialData) {
     form = useForm<z.infer<typeof formSchema>>({
@@ -167,8 +165,9 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
         {
           onSuccess(data, variables, context) {
             toast({
-              title: "Su turno se creo con exito",
-              description: "Porfavor aguarda mientras es redirigido",
+              title: "Turno creado.",
+              description: toastMessage,
+              duration: 3000,
             });
             router.push(`/appointments`);
             setTimeout(() => {
@@ -179,7 +178,12 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
             toast({
               title: "Something went wrong.",
               description: error.message,
+              duration: 3000,
             });
+            router.push(`/appointments`);
+            setTimeout(() => {
+              router.refresh();
+            }, 600);
           },
         },
       );
@@ -253,14 +257,14 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
+          className="w-full space-y-6"
         >
-          <div className="gap-8 md:grid md:grid-cols-3">
+          <div className="grid w-full grid-cols-1 gap-5  md:grid md:grid-cols-3 lg:gap-8">
             <FormField
               control={form.control}
               name="patientId"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormLabel>Patients</FormLabel>
                   <Select
                     disabled={loading}
@@ -292,7 +296,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               control={form.control}
               name="dayId"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormLabel>Days</FormLabel>
                   <Select
                     disabled={loading}
@@ -331,7 +335,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               control={form.control}
               name="time.startTime"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormLabel>Inicio del turno</FormLabel>
                   <Select
                     disabled={loading}
@@ -343,16 +347,22 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Seleccione un dia"
+                          placeholder="Seleccione el inicio del turno"
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {filterTime?.map((time) => (
-                        <SelectItem key={time.id} value={time.startTime}>
-                          {time.startTime}
+                      {filterTime?.length === 0 ? (
+                        <SelectItem value="">
+                          No hay turnos disponibles
                         </SelectItem>
-                      ))}
+                      ) : (
+                        filterTime?.map((time) => (
+                          <SelectItem key={time.id} value={time.startTime}>
+                            {time.startTime}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -364,7 +374,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
               control={form.control}
               name="time.endTime"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full">
                   <FormLabel>Fin del turno</FormLabel>
                   <Select
                     disabled={loading}
@@ -376,16 +386,22 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Seleccione un dia"
+                          placeholder="Seleccione el fin del turno"
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {filterTime?.map((time) => (
-                        <SelectItem key={time.id} value={time.endTime}>
-                          {time.endTime}
+                      {filterTime?.length === 0 ? (
+                        <SelectItem value="">
+                          No hay turnos disponibles
                         </SelectItem>
-                      ))}
+                      ) : (
+                        filterTime?.map((time) => (
+                          <SelectItem key={time.id} value={time.endTime}>
+                            {time.endTime}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />

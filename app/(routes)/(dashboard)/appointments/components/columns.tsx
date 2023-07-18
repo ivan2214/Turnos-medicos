@@ -15,7 +15,6 @@ export type AppointmentColumn = {
   day: string;
   startTime: string;
   endTime: string;
-  createdAt: string;
 };
 
 export const columns: ColumnDef<AppointmentColumn>[] = [
@@ -115,23 +114,6 @@ export const columns: ColumnDef<AppointmentColumn>[] = [
       <div className="lowercase">
         {row.getValue("busy") === true ? "Ocupado" : "No ocupado"}
       </div>
-    ),
-  },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Creado
-          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("createdAt")}</div>
     ),
   },
   {

@@ -123,23 +123,29 @@ export const DayForm: React.FC<DayFormProps> = ({ initialData }) => {
           toast({
             title: "Day deleted.",
             description: "Day updated.",
+            duration: 3000,
           });
+          router.push(`/days`);
+          setTimeout(() => {
+            router.refresh();
+          }, 600);
         },
         onError(error, variables, context) {
           toast({
             title: "Something went wrong.",
             description: error.message,
+            duration: 3000,
           });
+          router.push(`/days`);
+          setTimeout(() => {
+            router.refresh();
+          }, 600);
         },
       },
     );
 
     setLoading(false);
     setOpen(false);
-    router.push(`/days`);
-    setTimeout(() => {
-      router.refresh();
-    }, 600);
   };
 
   return (
