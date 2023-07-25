@@ -16,13 +16,53 @@ import { redirect } from "next/navigation";
 
 import prisma from "@/app/libs/prismadb";
 import { Appointment, Day, Patient } from "@prisma/client";
+import { addMonths, startOfMonth, subMonths } from "date-fns";
 
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Example dashboard app using the components.",
 };
 
+async function getNewPatientsData() {
+  const currentDate = new Date();
+  const lastMonthDate = subMonths(currentDate, 1);
+
+  const newPatientsThisMonth = await prisma.patient.count({
+    where: {
+      createdAt: {
+        gte: startOfMonth(currentDate), // Obtener pacientes creados después del inicio del mes actual
+        lt: startOfMonth(addMonths(currentDate, 1)), // Obtener pacientes creados antes del inicio del próximo mes
+      },
+    },
+  });
+
+  const newPatientsLastMonth = await prisma.patient.count({
+    where: {
+      createdAt: {
+        gte: startOfMonth(lastMonthDate), // Obtener pacientes creados después del inicio del mes pasado
+        lt: startOfMonth(currentDate), // Obtener pacientes creados antes del inicio del mes actual
+      },
+    },
+  });
+
+  let percentageIncrease = 0; // Inicializar el porcentaje de aumento a cero
+
+  if (newPatientsLastMonth !== 0) {
+    percentageIncrease =
+      ((newPatientsThisMonth - newPatientsLastMonth) / newPatientsLastMonth) *
+      100;
+  }
+
+  return {
+    newPatientsThisMonth,
+    percentageIncrease,
+  };
+}
+
 export default async function DashboardPage() {
+  const { newPatientsThisMonth, percentageIncrease } =
+    await getNewPatientsData();
+
   const appointments: Appointment[] = await prisma.appointment.findMany({
     include: {
       time: true,
@@ -82,7 +122,7 @@ export default async function DashboardPage() {
               </div>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
@@ -129,9 +169,11 @@ export default async function DashboardPage() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+{patients.length}</div>
+                    <div className="text-2xl font-bold">
+                      +{newPatientsThisMonth}
+                    </div>
                     <p className="text-xs text-muted-foreground">
-                      +180.1% desde el ultimo mes
+                      {percentageIncrease.toFixed(1)}% desde el último mes
                     </p>
                   </CardContent>
                 </Card>
@@ -160,31 +202,6 @@ export default async function DashboardPage() {
                     </div>
                     <p className="text-xs text-muted-foreground">
                       +19% desde el ultimo mes
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Turnos activos
-                    </CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{days.length}</div>
-                    <p className="text-xs text-muted-foreground">
-                      +201 desde la ultima hoa
                     </p>
                   </CardContent>
                 </Card>
