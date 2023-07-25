@@ -4,7 +4,6 @@ import { Appointment, Day } from "@prisma/client";
 import {
   BarChart,
   Bar,
-  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
