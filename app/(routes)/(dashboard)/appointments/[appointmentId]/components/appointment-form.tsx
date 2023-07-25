@@ -86,7 +86,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
   ]);
 
   const createAppointmentForm = trpc.createAppointmentInternal.useMutation();
-  const deleteAppointmentForm = trpc.deleteAppointmentInteral.useMutation();
+  const deleteAppointmentForm = trpc.deleteAppointmentInternal.useMutation();
 
   const title = initialData ? "Editar turno" : "Crear turno";
   const description = initialData ? "Editar este turno." : "Añadir nuevo turno";
