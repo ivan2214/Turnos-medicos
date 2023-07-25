@@ -8,6 +8,6 @@ export default async function DashboardLayout({
 }) {
   const user = await getCurrentUser();
 
-  if (!user?.admin) redirect("/needs-admin");
+  if (!user) redirect("/auth");
   return <div className="container overflow-hidden py-5">{children}</div>;
 }
