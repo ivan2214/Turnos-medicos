@@ -54,7 +54,6 @@ export default async function DashboardPage() {
     return redirect("/auth");
   }
 
-  if (!currentUser?.admin) return redirect("/needs-admin");
   return (
     <div className="flex-col overflow-x-hidden md:flex">
       <div className="flex-1 lg:px-8">

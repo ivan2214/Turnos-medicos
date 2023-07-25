@@ -12,8 +12,6 @@ import LoginModal from "@/components/modals/LoginModal";
 import RegisterModal from "@/components/modals/RegisterModal";
 import ClientOnly from "@/components/ClientOnly";
 import AuthContext from "./context/AuthContext";
-import { redirect } from "next/navigation";
-import NeedAdminPage from "./(routes)/needs-admin/page";
 
 const PoppinsFont = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -37,13 +35,18 @@ export default async function RootLayout({
       <body className={PoppinsFont.className}>
         <TrpcProvider>
           <AuthContext>
-            <ThemeProvider storageKey="theme" attribute="class" defaultTheme="system" enableSystem>
+            <ThemeProvider
+              storageKey="theme"
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+            >
               <ClientOnly>
                 <Toaster />
                 <LoginModal />
                 <RegisterModal />
               </ClientOnly>
-              {currentUser?.admin && <Navbar currentUser={currentUser} />}
+              <Navbar currentUser={currentUser} />
               {children}
             </ThemeProvider>
           </AuthContext>
