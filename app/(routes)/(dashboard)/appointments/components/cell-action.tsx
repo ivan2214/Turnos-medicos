@@ -28,7 +28,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const deleteAppointmentForm = trpc.deleteAppointmentInteral.useMutation();
+  const deleteAppointmentForm = trpc.deleteAppointmentInternal.useMutation();
 
   const onConfirm = () => {
     setLoading(true);
