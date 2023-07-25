@@ -37,7 +37,7 @@ export default async function RootLayout({
       <body className={PoppinsFont.className}>
         <TrpcProvider>
           <AuthContext>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ThemeProvider storageKey="theme" attribute="class" defaultTheme="system" enableSystem>
               <ClientOnly>
                 <Toaster />
                 <LoginModal />
