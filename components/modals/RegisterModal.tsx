@@ -17,12 +17,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useLoginModal, useRegisterModal } from "@/hooks";
-import { useCallback, useState } from "react";
-import Modal from "./ModalActions";
+import { useCallback, useEffect, useState } from "react";
+
 import { signIn } from "next-auth/react";
-import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
-import { Icons } from "../icons";
+import { ChromeIcon, GithubIcon } from "lucide-react";
+import Modal from "./ModalActions";
+import { trpc } from "@/utils/trpc";
 
 const FormSchema = z.object({
   email: z
@@ -43,38 +44,43 @@ const RegisterModal = () => {
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const createUserMutation = trpc.createUserInternal.useMutation();
   const router = useRouter();
+  const registerUser = trpc.createUserInternal.useMutation();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
-  const { handleSubmit } = form;
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    createUserMutation.mutate({
-      email: data?.email,
-      name: data?.name,
-      password: data?.password,
+    registerUser.mutate(data, {
+      onSuccess(data, variables, context) {
+        toast({
+          title: "You submitted the following values:",
+          description: (
+            <pre className="mt-2 w-[340px] rounded-md bg-primary p-4  dark:bg-primary-foreground">
+              <code className="text-primary-foreground dark:text-gray-300">
+                {JSON.stringify(data, null, 2)}
+              </code>
+            </pre>
+          ),
+        });
+      },
+      onError(error, variables, context) {
+        toast({
+          title: "Uh oh! Something went wrong.",
+          description: (
+            <pre className="mt-2 w-[340px] rounded-md bg-primary p-4  dark:bg-primary-foreground">
+              <code className="text-primary-foreground dark:text-gray-300">
+                {JSON.stringify(error, null, 2)}
+              </code>
+            </pre>
+          ),
+        });
+      },
     });
 
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-primary p-4  dark:bg-primary-foreground">
-          <code className="text-primary-foreground dark:text-gray-300">
-            {createUserMutation.error?.shape
-              ? JSON.stringify(
-                  createUserMutation.error?.shape?.message,
-                  null,
-                  2,
-                )
-              : JSON.stringify(data, null, 2)}
-          </code>
-        </pre>
-      ),
-    });
     registerModal.onClose();
+    loginModal.onOpen();
     setTimeout(() => {
       router.refresh();
     }, 500);
@@ -98,7 +104,7 @@ const RegisterModal = () => {
             <FormItem className="w-full">
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="email@example.com" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -114,7 +120,7 @@ const RegisterModal = () => {
             <FormItem className="w-full">
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Jhon Doe" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -130,7 +136,7 @@ const RegisterModal = () => {
             <FormItem className="w-full">
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="shadcn" {...field} />
+                <Input type="password" placeholder="" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -145,32 +151,30 @@ const RegisterModal = () => {
 
   const footerContent = (
     <div className="mt-3 flex flex-col gap-4">
-      <hr />
       <Button variant="outline" onClick={() => signIn("google")}>
-        <Icons.google className="mr-2 h-4 w-4" />
+        <ChromeIcon className="mr-2 h-4 w-4" />
         Continue with Google
       </Button>
       <Button variant="outline" onClick={() => signIn("github")}>
-        <Icons.gitHub className="mr-2 h-4 w-4" />
+        <GithubIcon className="mr-2 h-4 w-4" />
         Continue with Github
       </Button>
       <div
         className="
-          mt-4 
-          text-center 
-          font-light 
-          text-neutral-500
-        "
+  text-center 
+  font-light 
+  text-neutral-500
+"
       >
         <p>
           Already have an account?
           <span
             onClick={onToggle}
             className="
-              cursor-pointer
-              text-primary
-              hover:underline
-            "
+      cursor-pointer
+      text-primary
+      hover:underline
+    "
           >
             {" "}
             Log in
@@ -185,9 +189,9 @@ const RegisterModal = () => {
       disabled={isLoading}
       isOpen={registerModal.isOpen}
       title="Register"
+      description="Register to your account."
       actionLabel="Continue"
       onClose={registerModal.onClose}
-      onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}
       footer={footerContent}
     />

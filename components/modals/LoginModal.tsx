@@ -1,24 +1,40 @@
 "use client";
 
-import axios from "axios";
-
 import { signIn } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-import Modal from "./ModalActions";
-import Heading from "@/components/ui/heading";
 import useRegisterModal from "@/hooks/useRegisterModal";
 import useLoginModal from "@/hooks/useLoginModal";
 
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast";
+
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { ChromeIcon, GithubIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Icons } from "../icons";
+import Modal from "./ModalActions";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+
+const FormSchema = z.object({
+  email: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  password: z.string().min(2, {
+    message: "Password must be at least 2 characters.",
+  }),
+});
 
 const LoginModal = () => {
   const router = useRouter();
@@ -27,19 +43,13 @@ const LoginModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FieldValues>({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
     setIsLoading(true);
+    console.log(data);
 
     signIn("credentials", {
       ...data,
@@ -81,11 +91,53 @@ const LoginModal = () => {
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
-      <Heading title="Welcome back" description="Login to your account!" />
-      <Label>Email</Label>
-      <Input id="email" disabled={isLoading} required />
-      <Label>Password</Label>
-      <Input id="password" type="password" disabled={isLoading} required />
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full space-y-6"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input id="email" disabled={isLoading} required {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    id="email"
+                    disabled={isLoading}
+                    required
+                    {...field}
+                    type="password"
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
     </div>
   );
 
@@ -93,26 +145,26 @@ const LoginModal = () => {
     <div className="mt-3 flex flex-col gap-4">
       <hr />
       <Button variant="outline" onClick={() => signIn("google")}>
-        <Icons.google className="mr-2 h-4 w-4" />
+        <ChromeIcon className="mr-2 h-4 w-4" />
         Continue with Google
       </Button>
       <Button variant="outline" onClick={() => signIn("github")}>
-        <Icons.gitHub className="mr-2 h-4 w-4" />
+        <GithubIcon className="mr-2 h-4 w-4" />
         Continue with Github
       </Button>
       <div
         className="
-      mt-4 text-center font-light text-neutral-500"
+     text-center font-light text-neutral-500"
       >
         <p>
           Primera vez?
           <span
             onClick={onToggle}
             className="
-              cursor-pointer
-              text-primary
-              hover:underline
-            "
+            cursor-pointer
+            text-primary
+            hover:underline
+          "
           >
             {" "}
             Creee una cuenta
@@ -127,9 +179,9 @@ const LoginModal = () => {
       disabled={isLoading}
       isOpen={loginModal.isOpen}
       title="Login"
+      description="Login to your account."
       actionLabel="Continue"
       onClose={loginModal.onClose}
-      onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}
       footer={footerContent}
     />
