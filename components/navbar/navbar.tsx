@@ -14,7 +14,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
   const admin = currentUser?.admin ?? false;
 
   return (
-    <div className="container border-b ">
+    <div className="container sticky top-0 z-50 border-b bg-background">
       <div className="flex h-16 items-center gap-3 px-4 lg:gap-0">
         <MainNav admin={admin} className="mx-6 hidden lg:flex" />
         <div className="ml-auto flex items-center space-x-4">

@@ -32,6 +32,7 @@ export function Overview({ appointments, days }: Props) {
 
   const data = days.map((day, index) => {
     const count = dayCounts[day.id];
+    console.log(day.weekday);
 
     return {
       name: day.weekday,
@@ -51,8 +52,14 @@ export function Overview({ appointments, days }: Props) {
           tickFormatter={(value: any) => String(Math.round(value))}
           domain={yDomain}
         />
-        <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
-        <Tooltip wrapperStyle={{ width: 100, backgroundColor: "#ccc" }} />
+        <CartesianGrid strokeDasharray="3 3" />
+        <Tooltip
+          contentStyle={{
+            colorScheme: "dark",
+            backgroundColor: "#000",
+            color: "#fff",
+          }}
+        />
         <Bar dataKey="total" barSize={30} fill="#8884d8" />
       </BarChart>
     </ResponsiveContainer>

@@ -55,11 +55,9 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="flex-col overflow-x-hidden md:flex">
-      <div className="flex-1 lg:px-8">
-        <div className="flex flex-col items-start justify-between gap-4 py-5 lg:flex-row">
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        </div>
+    <div className="w-full flex-col overflow-x-hidden md:flex">
+      <div className="w-full flex-1 lg:px-8">
+        <h2 className="text-3xl font-bold tracking-tight text-center md:text-left">Dashboard</h2>
         <Tabs
           defaultValue="overview"
           className="flex flex-col items-center gap-6"
@@ -161,8 +159,8 @@ export default async function DashboardPage() {
                 </CardContent>
               </Card>
             </div>
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-7 lg:gap-4">
-              <Card className="w-full lg:col-span-4">
+            <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-7 lg:gap-4">
+              <Card className="w-full col-span-full lg:col-span-5">
                 <CardHeader>
                   <CardTitle>Turnos en la semana</CardTitle>
                 </CardHeader>
@@ -170,7 +168,7 @@ export default async function DashboardPage() {
                   <Overview days={days} appointments={appointments} />
                 </CardContent>
               </Card>
-              <Card className="w-full lg:col-span-3">
+              <Card className="w-full lg:col-span-2">
                 <CardHeader>
                   <CardTitle>Turnos recientes</CardTitle>
                   <CardDescription>
