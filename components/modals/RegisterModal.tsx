@@ -56,13 +56,7 @@ const RegisterModal = () => {
       onSuccess(data, variables, context) {
         toast({
           title: "You submitted the following values:",
-          description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-primary p-4  dark:bg-primary-foreground">
-              <code className="text-primary-foreground dark:text-gray-300">
-                {JSON.stringify(data, null, 2)}
-              </code>
-            </pre>
-          ),
+          description: "You succeeded!",
         });
       },
       onError(error, variables, context) {
