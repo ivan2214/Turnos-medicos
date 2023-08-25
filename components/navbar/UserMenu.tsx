@@ -62,28 +62,18 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         <DropdownMenuGroup>
           {currentUser ? (
             <>
-              <DropdownMenuItem onClick={() => router.push("/appointments")}>
-                Mis Turnos
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/profile")}>
-                Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/settings")}>
-                Settings
-              </DropdownMenuItem>
-
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()}>
-                Log out
+                Cerrar Sesion
               </DropdownMenuItem>
             </>
           ) : (
             <>
               <DropdownMenuItem onClick={loginModal.onOpen}>
-                Login
+                Iniciar Sesion
               </DropdownMenuItem>
               <DropdownMenuItem onClick={registerModal.onOpen}>
-                Register
+                Registarse
               </DropdownMenuItem>
             </>
           )}

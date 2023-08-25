@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import Modal from "./ModalActions";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Icons } from "../icons";
 import {
   Form,
   FormControl,
@@ -28,12 +29,24 @@ import {
 } from "../ui/form";
 
 const FormSchema = z.object({
-  email: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  email: z.string({
+    required_error: "Email requerido.",
   }),
-  password: z.string().min(2, {
-    message: "Password must be at least 2 characters.",
-  }),
+  password: z
+    .string()
+    .nonempty({
+      message: "Contraseña requerida.",
+    })
+    .min(8, {
+      message: "La contraseña debe contener al menos 8 caracteres.",
+    })
+    .regex(
+      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+      {
+        message:
+          "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.",
+      },
+    ),
 });
 
 const LoginModal = () => {
@@ -59,7 +72,8 @@ const LoginModal = () => {
       if (callback?.status === 200) {
         toast({
           variant: "default",
-          title: "Registered!",
+          title: "Bienvenido! 🎉🎉",
+          description: "Gracias por volver.",
         });
         setTimeout(() => {
           router.refresh();
@@ -106,7 +120,7 @@ const LoginModal = () => {
                   <Input id="email" disabled={isLoading} required {...field} />
                 </FormControl>
                 <FormDescription>
-                  This is your public display name.
+                  Introduzca su correo electrónico
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -128,14 +142,12 @@ const LoginModal = () => {
                     type="password"
                   />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
+                <FormDescription>Introduzca su contraseña</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Iniciar sesión</Button>
         </form>
       </Form>
     </div>
@@ -146,11 +158,11 @@ const LoginModal = () => {
       <hr />
       <Button variant="outline" onClick={() => signIn("google")}>
         <ChromeIcon className="mr-2 h-4 w-4" />
-        Continue with Google
+        Continuar con google
       </Button>
       <Button variant="outline" onClick={() => signIn("github")}>
         <GithubIcon className="mr-2 h-4 w-4" />
-        Continue with Github
+        Continuar con github
       </Button>
       <div
         className="
@@ -178,9 +190,8 @@ const LoginModal = () => {
     <Modal
       disabled={isLoading}
       isOpen={loginModal.isOpen}
-      title="Login"
-      description="Login to your account."
-      actionLabel="Continue"
+      title="Iniciar sesión"
+      description="Inicie sesión en su cuenta"
       onClose={loginModal.onClose}
       body={bodyContent}
       footer={footerContent}

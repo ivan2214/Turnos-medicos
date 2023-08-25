@@ -20,7 +20,6 @@ interface ModalProps {
   description?: string;
   body?: React.ReactElement;
   footer?: React.ReactElement;
-  actionLabel: string;
   disabled?: boolean;
   secondaryAction?: () => void;
   secondaryActionLabel?: string;
@@ -30,10 +29,8 @@ const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   description,
-
   title,
   body,
-  actionLabel,
   footer,
   disabled,
   secondaryAction,

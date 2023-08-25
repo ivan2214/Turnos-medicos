@@ -28,15 +28,27 @@ import { trpc } from "@/utils/trpc";
 const FormSchema = z.object({
   email: z
     .string({
-      required_error: "A date is required.",
+      required_error: "Email requerido.",
     })
     .nonempty(),
   name: z.string().nonempty({
-    message: "A start time is required.",
+    message: "Nombre requerido.",
   }),
-  password: z.string().nonempty({
-    message: "An end time is required.",
-  }),
+  password: z
+    .string()
+    .nonempty({
+      message: "Contraseña requerida.",
+    })
+    .min(8, {
+      message: "La contraseña debe contener al menos 8 caracteres.",
+    })
+    .regex(
+      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+      {
+        message:
+          "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial.",
+      },
+    ),
 });
 
 const RegisterModal = () => {
@@ -55,8 +67,8 @@ const RegisterModal = () => {
     registerUser.mutate(data, {
       onSuccess(data, variables, context) {
         toast({
-          title: "You submitted the following values:",
-          description: "You succeeded!",
+          title: "Registrado!",
+          description: "Gracias por registrarte.",
         });
       },
       onError(error, variables, context) {
@@ -101,7 +113,7 @@ const RegisterModal = () => {
                 <Input placeholder="email@example.com" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                Este sera su correo de registro.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -116,9 +128,7 @@ const RegisterModal = () => {
               <FormControl>
                 <Input placeholder="Jhon Doe" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormDescription>Este sera su nombre de usuario.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -133,12 +143,14 @@ const RegisterModal = () => {
                 <Input type="password" placeholder="" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                Debe tener al menos 8 caracteres, una mayúscula, una minúscula,
+                un número y un carácter especial.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+        <Button type="submit">Registrarse</Button>
       </form>
     </Form>
   );
@@ -147,11 +159,11 @@ const RegisterModal = () => {
     <div className="mt-3 flex flex-col gap-4">
       <Button variant="outline" onClick={() => signIn("google")}>
         <ChromeIcon className="mr-2 h-4 w-4" />
-        Continue with Google
+        Continuar con Google
       </Button>
       <Button variant="outline" onClick={() => signIn("github")}>
         <GithubIcon className="mr-2 h-4 w-4" />
-        Continue with Github
+        Continuar con GitHub
       </Button>
       <div
         className="
@@ -161,7 +173,7 @@ const RegisterModal = () => {
 "
       >
         <p>
-          Already have an account?
+          Ya tienes una cuenta?
           <span
             onClick={onToggle}
             className="
@@ -171,7 +183,7 @@ const RegisterModal = () => {
     "
           >
             {" "}
-            Log in
+            Iniciar sesión
           </span>
         </p>
       </div>
@@ -182,9 +194,8 @@ const RegisterModal = () => {
     <Modal
       disabled={isLoading}
       isOpen={registerModal.isOpen}
-      title="Register"
-      description="Register to your account."
-      actionLabel="Continue"
+      title="Registrarse"
+      description="Registre su cuenta"
       onClose={registerModal.onClose}
       body={bodyContent}
       footer={footerContent}

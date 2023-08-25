@@ -30,7 +30,7 @@ export function UserAuthForm({
       <div className="grid gap-2">
         <Button onClick={() => loginModal.onOpen()} disabled={isLoading}>
           {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-          Sign In
+          Iniciar Sesion
         </Button>
       </div>
 
@@ -40,7 +40,7 @@ export function UserAuthForm({
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or Register now
+            o Registrarse
           </span>
         </div>
       </div>
@@ -51,7 +51,7 @@ export function UserAuthForm({
         disabled={isLoading}
       >
         {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-        Register
+        Registrarse
       </Button>
     </div>
   );
